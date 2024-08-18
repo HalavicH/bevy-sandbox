@@ -27,8 +27,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut materials: 
         .insert(Velocity { x: 0.0, y: 100.0 }); // Set a velocity moving upwards
 }
 
-fn move_square(time: Res<Time>, mut query: Query<(&Velocity, &mut Transform)>) {
-    for (velocity, mut transform) in query.iter_mut() {
+fn move_square(time: Res<Time>, mut query: Query<(&mut Velocity, &mut Transform)>) {
+    for (mut velocity, mut transform) in query.iter_mut() {
+        let is_going_up = velocity.y > 0.0;
+        let should_reverse = (is_going_up && transform.translation.y > 300.0) || (!is_going_up && transform.translation.y < -300.0);
+        if should_reverse {
+            velocity.y *= -1.0;
+        }
         // Update the position based on velocity and time delta
         transform.translation.x += velocity.x * time.delta_seconds();
         transform.translation.y += velocity.y * time.delta_seconds();
