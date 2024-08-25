@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = "0.11"  # Ensure you're using the latest version of Bevy
+bevy = "0.14.1"  # Ensure you're using the latest version of Bevy
