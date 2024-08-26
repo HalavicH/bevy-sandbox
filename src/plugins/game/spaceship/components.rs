@@ -1,2 +1,2 @@
 use bevy::prelude::*;
-use crate::components::Velocity;
+use crate::plugins::game::movement::components::Velocity;

@@ -1,5 +1,7 @@
 use bevy::prelude::*;
-use crate::components::{Acceleration, Velocity};
+use crate::plugins::game::movement::components::{Acceleration, SpinVelocity, Velocity};
+
+pub mod components;
 
 pub struct MovementPlugin;
 
@@ -14,7 +16,8 @@ impl Plugin for MovementPlugin {
         app.add_systems(Update, (
             // update_acceleration_from_keys,
             update_position,
-            update_velocity
+            update_velocity,
+            update_rotation
         ));
     }
 }
@@ -52,5 +55,17 @@ pub fn update_velocity(mut query: Query<(&Acceleration, &mut Velocity)>, time: R
 pub fn update_position(time: Res<Time>, mut query: Query<(&Velocity, &mut Transform)>) {
     for (velocity, mut transform) in query.iter_mut() {
         transform.translation += velocity.value * time.delta_seconds();
+    }
+}
+
+pub fn update_rotation(
+    time: Res<Time>,
+    mut query: Query<(&SpinVelocity, &mut Transform)>,
+) {
+    for (spin_velocity, mut transform) in query.iter_mut() {
+        transform.rotation *= Quat::from_axis_angle(
+            spin_velocity.value * time.delta_seconds(),
+            5.5,
+        );
     }
 }

@@ -1,4 +1,6 @@
+use std::collections::HashSet;
 use bevy::prelude::*;
+use crate::plugins::game::assets::GameAssetsPlugin;
 use crate::plugins::game::asteroid::AsteroidPlugin;
 use crate::plugins::game::debug::DebugPlugin;
 use crate::plugins::game::movement::MovementPlugin;
@@ -8,6 +10,8 @@ mod spaceship;
 mod debug;
 mod movement;
 mod asteroid;
+mod assets;
+
 
 pub struct GamePlugin;
 
@@ -19,6 +23,7 @@ impl Plugin for GamePlugin {
                 color: Color::default(),
                 brightness: 1000.0,
             })
+            .add_plugins(GameAssetsPlugin)
             .add_plugins(SpaceshipPlugin)
             .add_plugins(AsteroidPlugin)
             .add_plugins(MovementPlugin)

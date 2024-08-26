@@ -10,3 +10,8 @@ pub struct Velocity {
 pub struct Acceleration {
     pub value: Vec3
 }
+
+#[derive(Component, Default, Clone)]
+pub struct SpinVelocity {
+    pub value: Vec3
+}

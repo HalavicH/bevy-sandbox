@@ -1,7 +1,8 @@
 use std::ops::Range;
 use bevy::prelude::*;
 use rand::Rng;
-use crate::components::{Acceleration, Velocity};
+use crate::plugins::game::assets::GameAssets;
+use crate::plugins::game::movement::components::{Acceleration, Velocity};
 use crate::plugins::game::movement::MovingObjectBundle;
 
 pub struct AsteroidPlugin;
@@ -40,8 +41,7 @@ pub fn spawn_asteroid(
     mut commands: Commands,
     time: Res<Time>,
     mut timer: ResMut<AsteroidSpawnTimer>,
-    asset_server: Res<AssetServer>,
-
+    game_assets: Res<GameAssets>,
 ) {
     timer.timer.tick(time.delta());
     if !(timer.timer.finished()) {
@@ -68,7 +68,7 @@ pub fn spawn_asteroid(
         velocity: Velocity { value: velocity },
         acceleration: Acceleration { value: acceleration },
         model: SceneBundle {
-            scene: asset_server.load(random_asteroid_model_path_str()),
+            scene: game_assets.get_random_asteroid(),
             transform: Transform::from_translation(translation),
             ..SceneBundle::default()
         }
@@ -76,19 +76,6 @@ pub fn spawn_asteroid(
     .insert(Asteroid);
 }
 
-fn random_asteroid_model_path_str() -> String {
-    const BASE_PATH: &str = "assets/models/rock";
-    // pick any dlb file in the folder
-    let files_in_folder = std::fs::read_dir(BASE_PATH).unwrap();
-    let file_paths_vec: Vec<String> = files_in_folder
-        .map(|entry| entry.unwrap().path().to_str().unwrap().to_string())
-        .collect();
-
-    let random_index = rand::random::<usize>() % file_paths_vec.len();
-    let random_file_path = &file_paths_vec[random_index];
-    println!("Random file path: {:?}", random_file_path);
-    random_file_path.replace("assets/", "") + "#Scene0"
-}
 
 fn rand_within_range(range: Range<f32>) -> f32 {
     let delta = range.end - range.start;

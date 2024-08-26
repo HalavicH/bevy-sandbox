@@ -1,5 +1,6 @@
 use bevy::prelude::*;
-use crate::components::Velocity;
+use crate::plugins::game::assets::GameAssets;
+use crate::plugins::game::movement::components::Velocity;
 use crate::plugins::game::movement::MovingObjectBundle;
 
 
@@ -8,7 +9,7 @@ const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
 
 pub fn spawn_spaceship(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    game_assets: Res<GameAssets>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn(
@@ -18,7 +19,7 @@ pub fn spawn_spaceship(
             },
             acceleration: Default::default(),
             model: SceneBundle {
-                scene: asset_server.load("models/Spaceship.glb#Scene0"),
+                scene: game_assets.get_spaceship(),
                 transform: Transform::from_translation(STARTING_TRANSLATION),
                 global_transform: Default::default(),
                 visibility: Default::default(),
