@@ -11,7 +11,35 @@ pub struct MovingObjectBundle {
 }
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (update_position, update_velocity));
+        app.add_systems(Update, (
+            // update_acceleration_from_keys,
+            update_position,
+            update_velocity
+        ));
+    }
+}
+
+pub fn update_acceleration_from_keys(
+    mut query: Query<&mut Acceleration>,
+    input: Res<ButtonInput<KeyCode>>,
+    time: Res<Time>,
+) {
+    const ACCELERATION_RATE: f32 = 1.0;
+    for mut acceleration in query.iter_mut() {
+        let mut value = Vec3::ZERO;
+        if input.pressed(KeyCode::KeyW) {
+            value.z += ACCELERATION_RATE;
+        }
+        if input.pressed(KeyCode::KeyS) {
+            value.z -= ACCELERATION_RATE;
+        }
+        if input.pressed(KeyCode::KeyA) {
+            value.x -= ACCELERATION_RATE;
+        }
+        if input.pressed(KeyCode::KeyD) {
+            value.x += ACCELERATION_RATE;
+        }
+        acceleration.value = value.normalize();
     }
 }
 

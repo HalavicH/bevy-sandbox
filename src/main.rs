@@ -12,7 +12,7 @@ fn main() {
         .run();
 }
 
-const CAMERA_DISTANCE: f32 = 50.0;
+const CAMERA_DISTANCE: f32 = 100.0;
 
 fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera3dBundle {

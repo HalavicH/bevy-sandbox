@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::plugins::game::asteroid::AsteroidPlugin;
 use crate::plugins::game::debug::DebugPlugin;
 use crate::plugins::game::movement::MovementPlugin;
 use crate::plugins::game::spaceship::SpaceshipPlugin;
@@ -6,6 +7,7 @@ use crate::plugins::game::spaceship::SpaceshipPlugin;
 mod spaceship;
 mod debug;
 mod movement;
+mod asteroid;
 
 pub struct GamePlugin;
 
@@ -18,8 +20,9 @@ impl Plugin for GamePlugin {
                 brightness: 1000.0,
             })
             .add_plugins(SpaceshipPlugin)
+            .add_plugins(AsteroidPlugin)
             .add_plugins(MovementPlugin)
-            .add_plugins(DebugPlugin)
+            // .add_plugins(DebugPlugin)
             .add_systems(Update, exit_on_esc_system)
         ;
     }
