@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use crate::components::Velocity;
-use crate::plugins::game::spaceship::components::SpaceshipBundle;
-use crate::plugins::game::spaceship::SpaceshipPlugin;
+use crate::plugins::game::movement::MovingObjectBundle;
 
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
@@ -13,10 +12,11 @@ pub fn spawn_spaceship(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn(
-        SpaceshipBundle {
+        MovingObjectBundle {
             velocity: Velocity {
-                vec3: STARTING_VELOCITY,
+                value: STARTING_VELOCITY,
             },
+            acceleration: Default::default(),
             model: SceneBundle {
                 scene: asset_server.load("models/Spaceship.glb#Scene0"),
                 transform: Transform::from_translation(STARTING_TRANSLATION),
@@ -27,16 +27,4 @@ pub fn spawn_spaceship(
             }
         }
     );
-}
-
-pub fn update_position(time: Res<Time>, mut query: Query<(&Velocity, &mut Transform)>) {
-    for (velocity, mut transform) in query.iter_mut() {
-        transform.translation += velocity.vec3 * time.delta_seconds();
-    }
-}
-
-pub fn print_position(query: Query<&Transform>) {
-    for transform in query.iter() {
-        println!("Spaceship at: {:?}", transform.translation);
-    }
 }

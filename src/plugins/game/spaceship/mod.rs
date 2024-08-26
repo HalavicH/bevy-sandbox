@@ -8,7 +8,6 @@ pub struct SpaceshipPlugin;
 
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_spaceship)
-            .add_systems(Update, (update_position, print_position));
+        app.add_systems(Startup, spawn_spaceship);
     }
 }

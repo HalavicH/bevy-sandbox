@@ -3,6 +3,10 @@ use bevy::prelude::{Component};
 
 #[derive(Component, Default, Clone)]
 pub struct Velocity {
-    pub vec3: Vec3
+    pub value: Vec3
 }
 
+#[derive(Component, Default, Clone)]
+pub struct Acceleration {
+    pub value: Vec3
+}

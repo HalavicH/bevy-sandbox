@@ -4,11 +4,6 @@ use bevy_sandbox::plugins::game::GamePlugin;
 fn main() {
     App::new()
         // Bevy built-ins
-        .insert_resource(ClearColor(Color::srgb(0.08, 0.01, 0.1)))
-        .insert_resource(AmbientLight {
-            color: Color::default(),
-            brightness: 0.1,
-        })
         .add_plugins(DefaultPlugins)
         // Custom plugins
         .add_plugins(GamePlugin)
