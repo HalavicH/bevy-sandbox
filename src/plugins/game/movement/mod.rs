@@ -5,7 +5,7 @@ pub mod components;
 
 pub struct MovementPlugin;
 
-#[derive(Bundle)]
+#[derive(Bundle, Default)]
 pub struct MovingObjectBundle {
     pub velocity: Velocity,
     pub acceleration: Acceleration,

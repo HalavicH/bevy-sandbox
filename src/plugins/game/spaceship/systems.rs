@@ -1,8 +1,9 @@
+use std::f32::consts::FRAC_PI_2;
 use bevy::prelude::*;
 use crate::plugins::game::assets::GameAssets;
 use crate::plugins::game::movement::components::Velocity;
 use crate::plugins::game::movement::MovingObjectBundle;
-use crate::plugins::game::spaceship::components::Spaceship;
+use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
 const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
@@ -14,7 +15,7 @@ const SPACESHIP_ROLL_SCALAR: f32 = 5.0;
 pub fn spawn_spaceship(
     mut commands: Commands,
     game_assets: Res<GameAssets>,
-    mut materials: ResMut<Assets<ColorMaterial>>
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn(
         MovingObjectBundle {
@@ -29,7 +30,7 @@ pub fn spawn_spaceship(
                 visibility: Default::default(),
                 inherited_visibility: Default::default(),
                 view_visibility: Default::default(),
-            }
+            },
         }
     ).insert(Spaceship);
 }
@@ -63,8 +64,69 @@ pub fn move_spaceship(
         roll -= SPACESHIP_ROLL_SCALAR * time.delta_seconds();
     }
 
+    // We negate the forward direction because bevy inverts the z-axis
     let forward_direction = -transform.forward();
+
     velocity.value = forward_direction * movement;
     transform.rotate_y(rotation);
     transform.rotate_local_z(roll);
+}
+
+#[derive(Resource)]
+pub struct ProjectileTimer {
+    pub value: Timer,
+}
+
+impl Default for ProjectileTimer {
+    fn default() -> Self {
+        Self {
+            value: Timer::from_seconds(0.070, TimerMode::Repeating),
+        }
+    }
+}
+
+pub fn fire_projectile(
+    mut commands: Commands,
+    game_assets: Res<GameAssets>,
+    query: Query<&Transform, With<Spaceship>>,
+    input : Res<ButtonInput<KeyCode>>,
+    mut timer: ResMut<ProjectileTimer>,
+    time: Res<Time>,
+) {
+    let spaceship_transform = query.single();
+    const PROJ_SPEED: f32 = 50.0;
+    const NOSE_OFFSET: f32 = 10.0;
+    const PROJ_SCALE_FACTOR: Vec3 = Vec3::splat(0.5);
+
+    timer.value.tick(time.delta());
+    if !input.pressed(KeyCode::Space) {
+        return;
+    }
+
+    if !timer.value.finished() {
+        return;
+    }
+
+    // We negate the forward direction because bevy inverts the z-axis
+    let spaceship_forward_direction = -spaceship_transform.forward();
+    let spaceship_nose_vec = spaceship_forward_direction * NOSE_OFFSET;
+    let mut transform = Transform::from_translation(
+        spaceship_transform.translation + spaceship_nose_vec
+    );
+    transform.scale = PROJ_SCALE_FACTOR;
+
+    // Rotate the projectile 90 degrees around the X-axis
+    transform.rotation = spaceship_transform.rotation * Quat::from_rotation_x(FRAC_PI_2);
+
+    commands.spawn(
+        MovingObjectBundle {
+            velocity: Velocity::new(spaceship_forward_direction * PROJ_SPEED),
+            acceleration: Default::default(),
+            model: SceneBundle {
+                scene: game_assets.get_projectile(),
+                transform: transform,
+                ..SceneBundle::default()
+            },
+        }
+    ).insert(Projectile);
 }

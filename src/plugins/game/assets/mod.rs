@@ -40,7 +40,7 @@ pub fn load_assets(
         .iter()
         .map(|path| asset_server.load(path))
         .collect();
-    // game_assets.projectile = asset_server.load("models/projectile.gltf#Scene0");
+    game_assets.projectile = asset_server.load("models/Missile by Jarlan Perez [CC-BY].glb#Scene0");
 }
 
 fn list_asteroid_model_paths() -> Vec<String> {
