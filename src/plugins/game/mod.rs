@@ -1,17 +1,17 @@
-use std::collections::HashSet;
-use bevy::prelude::*;
 use crate::plugins::game::assets::GameAssetsPlugin;
 use crate::plugins::game::asteroid::AsteroidPlugin;
-use crate::plugins::game::debug::DebugPlugin;
 use crate::plugins::game::movement::MovementPlugin;
 use crate::plugins::game::spaceship::SpaceshipPlugin;
+use bevy::prelude::*;
+use crate::plugins::game::collision::CollisionPlugin;
+use crate::plugins::game::debug::DebugPlugin;
 
-mod spaceship;
+mod assets;
+mod asteroid;
 mod debug;
 mod movement;
-mod asteroid;
-mod assets;
-
+mod spaceship;
+mod collision;
 
 pub struct GamePlugin;
 
@@ -27,14 +27,14 @@ impl Plugin for GamePlugin {
             .add_plugins(SpaceshipPlugin)
             .add_plugins(AsteroidPlugin)
             .add_plugins(MovementPlugin)
-            // .add_plugins(DebugPlugin)
-            .add_systems(Update, exit_on_esc_system)
-        ;
+            .add_plugins(CollisionPlugin)
+            .add_plugins(DebugPlugin)
+            .add_systems(Update, exit_on_esc_system);
     }
 }
 
-fn exit_on_esc_system(input: Res<ButtonInput<KeyCode>>, mut exit: EventWriter<AppExit>) {
+fn exit_on_esc_system(input: Res<ButtonInput<KeyCode>>, mut ev_wr: EventWriter<AppExit>) {
     if input.pressed(KeyCode::Escape) {
-        exit.send(AppExit::Success);
+        ev_wr.send(AppExit::Success);
     }
 }

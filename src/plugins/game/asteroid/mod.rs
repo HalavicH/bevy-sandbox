@@ -1,10 +1,12 @@
-use std::ops::Range;
-use bevy::prelude::*;
-use rand::prelude::ThreadRng;
-use rand::Rng;
 use crate::plugins::game::assets::GameAssets;
 use crate::plugins::game::movement::components::{Acceleration, Velocity};
 use crate::plugins::game::movement::MovingObjectBundle;
+use bevy::prelude::*;
+use rand::prelude::ThreadRng;
+use rand::Rng;
+use std::ops::Range;
+use bevy::a11y::accesskit::Size;
+use crate::plugins::game::collision::Colliders;
 
 pub struct AsteroidPlugin;
 
@@ -35,8 +37,7 @@ impl Default for AsteroidSpawnTimer {
 
 impl Plugin for AsteroidPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .init_resource::<AsteroidSpawnTimer>()
+        app.init_resource::<AsteroidSpawnTimer>()
             .add_systems(Update, spawn_asteroid);
     }
 }
@@ -68,29 +69,29 @@ pub fn spawn_asteroid(
             return Vec3::ZERO;
         }
 
-        Vec3::new(
-            rng.gen_range(-1.0..1.0),
-            0.,
-            rng.gen_range(-1.0..1.0),
-        ).normalize_or_zero()
+        Vec3::new(rng.gen_range(-1.0..1.0), 0., rng.gen_range(-1.0..1.0)).normalize_or_zero()
     };
 
     let velocity = random_unit_vector() * VELOCITY_SCALAR;
     let acceleration = random_unit_vector() * ACCELERATION_SCALAR;
 
-    commands.spawn(MovingObjectBundle {
-        velocity: Velocity { value: velocity },
-        acceleration: Acceleration { value: acceleration },
-        model: SceneBundle {
-            scene: game_assets.get_random_asteroid(),
-            transform: Transform::from_translation(translation),
-            ..SceneBundle::default()
-        },
-    })
+    commands
+        .spawn(MovingObjectBundle {
+            velocity: Velocity { value: velocity },
+            acceleration: Acceleration {
+                value: acceleration,
+            },
+            model: SceneBundle {
+                scene: game_assets.get_random_asteroid(),
+                transform: Transform::from_translation(translation),
+                ..SceneBundle::default()
+            },
+            colliders: Colliders::new(Size { width: 5.0, height: 5.0 }),
+        })
         .insert(Asteroid);
 }
 
-fn gen_asteroid_position(mut rng: &mut ThreadRng) -> Vec3 {
+fn gen_asteroid_position(rng: &mut ThreadRng) -> Vec3 {
     let mut pos = Vec3::new(
         rng.gen_range(SPAWN_RANGE_X),
         0.,

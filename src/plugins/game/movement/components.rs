@@ -1,9 +1,9 @@
 use bevy::math::Vec3;
-use bevy::prelude::{Component};
+use bevy::prelude::Component;
 
 #[derive(Component, Default, Clone)]
 pub struct Velocity {
-    pub value: Vec3
+    pub value: Vec3,
 }
 
 impl Velocity {
@@ -14,7 +14,7 @@ impl Velocity {
 
 #[derive(Component, Default, Clone)]
 pub struct Acceleration {
-    pub value: Vec3
+    pub value: Vec3,
 }
 
 impl Acceleration {
@@ -25,7 +25,7 @@ impl Acceleration {
 
 #[derive(Component, Default, Clone)]
 pub struct SpinVelocity {
-    pub value: Vec3
+    pub value: Vec3,
 }
 
 impl SpinVelocity {

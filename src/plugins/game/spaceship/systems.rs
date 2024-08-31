@@ -1,9 +1,11 @@
-use std::f32::consts::FRAC_PI_2;
-use bevy::prelude::*;
 use crate::plugins::game::assets::GameAssets;
 use crate::plugins::game::movement::components::Velocity;
 use crate::plugins::game::movement::MovingObjectBundle;
 use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
+use bevy::prelude::*;
+use std::f32::consts::FRAC_PI_2;
+use bevy::a11y::accesskit::Size;
+use crate::plugins::game::collision::Colliders;
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
 const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
@@ -15,10 +17,9 @@ const SPACESHIP_ROLL_SCALAR: f32 = 5.0;
 pub fn spawn_spaceship(
     mut commands: Commands,
     game_assets: Res<GameAssets>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    commands.spawn(
-        MovingObjectBundle {
+    commands
+        .spawn(MovingObjectBundle {
             velocity: Velocity {
                 value: STARTING_VELOCITY,
             },
@@ -31,8 +32,9 @@ pub fn spawn_spaceship(
                 inherited_visibility: Default::default(),
                 view_visibility: Default::default(),
             },
-        }
-    ).insert(Spaceship);
+            colliders: Colliders::new(Size { width: 5.0, height: 5.0 }),
+        })
+        .insert(Spaceship);
 }
 
 pub fn move_spaceship(
@@ -48,19 +50,22 @@ pub fn move_spaceship(
 
     if input.just_pressed(KeyCode::KeyW) || input.pressed(KeyCode::KeyW) {
         movement += SPACESHIP_SPEED_SCALAR;
-    } else if input.just_pressed(KeyCode::KeyS) || input.pressed(KeyCode::KeyS) {
+    }
+    if input.just_pressed(KeyCode::KeyS) || input.pressed(KeyCode::KeyS) {
         movement -= SPACESHIP_SPEED_SCALAR;
     }
 
     if input.just_pressed(KeyCode::KeyA) || input.pressed(KeyCode::KeyA) {
         rotation += SPACESHIP_ROTATION_SCALAR * time.delta_seconds();
-    } else if input.just_pressed(KeyCode::KeyD) || input.pressed(KeyCode::KeyD) {
+    }
+    if input.just_pressed(KeyCode::KeyD) || input.pressed(KeyCode::KeyD) {
         rotation -= SPACESHIP_ROTATION_SCALAR * time.delta_seconds();
     }
 
     if input.just_pressed(KeyCode::KeyQ) || input.pressed(KeyCode::KeyQ) {
         roll += SPACESHIP_ROLL_SCALAR * time.delta_seconds();
-    } else if input.just_pressed(KeyCode::KeyE) || input.pressed(KeyCode::KeyE) {
+    }
+    if input.just_pressed(KeyCode::KeyE) || input.pressed(KeyCode::KeyE) {
         roll -= SPACESHIP_ROLL_SCALAR * time.delta_seconds();
     }
 
@@ -89,7 +94,7 @@ pub fn fire_projectile(
     mut commands: Commands,
     game_assets: Res<GameAssets>,
     query: Query<&Transform, With<Spaceship>>,
-    input : Res<ButtonInput<KeyCode>>,
+    input: Res<ButtonInput<KeyCode>>,
     mut timer: ResMut<ProjectileTimer>,
     time: Res<Time>,
 ) {
@@ -110,23 +115,26 @@ pub fn fire_projectile(
     // We negate the forward direction because bevy inverts the z-axis
     let spaceship_forward_direction = -spaceship_transform.forward();
     let spaceship_nose_vec = spaceship_forward_direction * NOSE_OFFSET;
-    let mut transform = Transform::from_translation(
-        spaceship_transform.translation + spaceship_nose_vec
-    );
+    let mut transform =
+        Transform::from_translation(spaceship_transform.translation + spaceship_nose_vec);
     transform.scale = PROJ_SCALE_FACTOR;
 
     // Rotate the projectile 90 degrees around the X-axis
     transform.rotation = spaceship_transform.rotation * Quat::from_rotation_x(FRAC_PI_2);
 
-    commands.spawn(
-        MovingObjectBundle {
+    let handle = game_assets.get_projectile();
+    // let model_size = game_assets.get_model_size(handle);
+    let colliders = Colliders::new(Size { width: 5.0, height: 5.0 });
+    commands
+        .spawn(MovingObjectBundle {
             velocity: Velocity::new(spaceship_forward_direction * PROJ_SPEED),
             acceleration: Default::default(),
             model: SceneBundle {
-                scene: game_assets.get_projectile(),
-                transform: transform,
+                scene: handle,
+                transform,
                 ..SceneBundle::default()
             },
-        }
-    ).insert(Projectile);
+            colliders,
+        })
+        .insert(Projectile);
 }

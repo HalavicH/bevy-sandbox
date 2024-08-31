@@ -20,6 +20,19 @@ impl GameAssets {
     pub fn get_projectile(&self) -> Handle<Scene> {
         self.projectile.clone()
     }
+
+    // pub fn get_model_size(&self, model: &Handle<Scene>) -> Vec3 {
+    //     let scene = model.ge(&self.spaceship).unwrap();
+    //     let size = scene
+    //         .children
+    //         .iter()
+    //         .map(|entity| {
+    //             let transform = entity.transform;
+    //             transform.scale
+    //         })
+    //         .fold(Vec3::ZERO, |acc, scale| acc + scale);
+    //     size
+    // }
 }
 
 pub struct GameAssetsPlugin;
@@ -31,10 +44,7 @@ impl Plugin for GameAssetsPlugin {
     }
 }
 
-pub fn load_assets(
-    asset_server: Res<AssetServer>,
-    mut game_assets: ResMut<GameAssets>,
-) {
+pub fn load_assets(asset_server: Res<AssetServer>, mut game_assets: ResMut<GameAssets>) {
     game_assets.spaceship = asset_server.load("models/Spaceship.glb#Scene0");
     game_assets.asteroids = list_asteroid_model_paths()
         .iter()
@@ -48,15 +58,23 @@ fn list_asteroid_model_paths() -> Vec<String> {
 
     let files_in_folder = std::fs::read_dir(BASE_PATH).unwrap();
     let file_paths_vec: Vec<String> = files_in_folder
-        .map(|entry| entry.unwrap()
-            .path()
-            .to_str().unwrap()
-            .to_string()
-            .replace("assets/", "") + "#Scene0"
-        )
+        .map(|entry| {
+            entry
+                .expect("Expected to load file successfully")
+                .path()
+                .to_str()
+                .expect("Expected to convert path to string")
+                .to_string()
+                .replace("assets/", "")
+                + "#Scene0"
+        })
         .collect();
 
-    info!("Found {} asteroid assets\n{:#?}", file_paths_vec.len(), file_paths_vec);
+    info!(
+        "Found {} asteroid assets\n{:#?}",
+        file_paths_vec.len(),
+        file_paths_vec
+    );
 
     file_paths_vec
 }
