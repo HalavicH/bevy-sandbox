@@ -6,6 +6,8 @@ use rand::prelude::ThreadRng;
 use rand::Rng;
 use std::ops::Range;
 use bevy::a11y::accesskit::Size;
+use bevy::render::mesh::VertexAttributeValues;
+use log::log;
 use crate::plugins::game::collision::Colliders;
 
 pub struct AsteroidPlugin;
@@ -13,8 +15,8 @@ pub struct AsteroidPlugin;
 const SPAWN_RANGE_X: Range<f32> = -100.0..100.0;
 const SPAWN_RANGE_Y: Range<f32> = -100.0..100.0;
 
-const SPAWN_RANGE_EXCLUSION_X: Range<f32> = -50.0..50.0;
-const SPAWN_RANGE_EXCLUSION_Y: Range<f32> = -50.0..50.0;
+const SPAWN_RANGE_EXCLUSION_X: Range<f32> = -5.0..5.0;
+const SPAWN_RANGE_EXCLUSION_Y: Range<f32> = -5.0..5.0;
 
 const VELOCITY_SCALAR: f32 = 5.0;
 const ACCELERATION_SCALAR: f32 = 5.0;
@@ -30,7 +32,7 @@ pub struct AsteroidSpawnTimer {
 impl Default for AsteroidSpawnTimer {
     fn default() -> Self {
         Self {
-            timer: Timer::from_seconds(1.0, TimerMode::Repeating),
+            timer: Timer::from_seconds(0.5, TimerMode::Repeating),
         }
     }
 }
@@ -38,7 +40,8 @@ impl Default for AsteroidSpawnTimer {
 impl Plugin for AsteroidPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<AsteroidSpawnTimer>()
-            .add_systems(Update, spawn_asteroid);
+            .add_systems(Update, spawn_asteroid)
+            .add_systems(Update, despawn_on_collision);
     }
 }
 
@@ -75,6 +78,9 @@ pub fn spawn_asteroid(
     let velocity = random_unit_vector() * VELOCITY_SCALAR;
     let acceleration = random_unit_vector() * ACCELERATION_SCALAR;
 
+    let handle = game_assets.get_random_asteroid();
+    // TODO: Calc based on mesh size
+    let size = Size { width: 5.0, height: 5.0 };
     commands
         .spawn(MovingObjectBundle {
             velocity: Velocity { value: velocity },
@@ -82,11 +88,11 @@ pub fn spawn_asteroid(
                 value: acceleration,
             },
             model: SceneBundle {
-                scene: game_assets.get_random_asteroid(),
+                scene: handle,
                 transform: Transform::from_translation(translation),
                 ..SceneBundle::default()
             },
-            colliders: Colliders::new(Size { width: 5.0, height: 5.0 }),
+            colliders: Colliders::new(size),
         })
         .insert(Asteroid);
 }
@@ -109,3 +115,19 @@ fn rand_within_range(range: Range<f32>) -> f32 {
     let delta = range.end - range.start;
     range.start + delta * rand::random::<f32>()
 }
+
+fn despawn_on_collision(
+    mut commands: Commands,
+    query: Query<(Entity, &Colliders), With<Asteroid>>)
+{
+    for (e, c) in query.iter() {
+        if c.colliding_with.is_empty() {
+            continue;
+        }
+
+        info!("Asteroid collided with {:?}. Despawning...", c.colliding_with);
+        commands.entity(e)
+            .despawn_recursive()
+    }
+}
+

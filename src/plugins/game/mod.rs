@@ -1,6 +1,6 @@
 use crate::plugins::game::assets::GameAssetsPlugin;
 use crate::plugins::game::asteroid::AsteroidPlugin;
-use crate::plugins::game::movement::MovementPlugin;
+use crate::plugins::game::movement::{MovementPlugin, MovingObjectBundle};
 use crate::plugins::game::spaceship::SpaceshipPlugin;
 use bevy::prelude::*;
 use crate::plugins::game::collision::CollisionPlugin;
@@ -29,7 +29,23 @@ impl Plugin for GamePlugin {
             .add_plugins(MovementPlugin)
             .add_plugins(CollisionPlugin)
             .add_plugins(DebugPlugin)
-            .add_systems(Update, exit_on_esc_system);
+            .add_systems(Update, exit_on_esc_system)
+        .add_systems(Update, despawn_out_of_area);
+    }
+}
+
+const DESPAWN_RADIUS: f32 = 200.0;
+fn despawn_out_of_area(
+    mut commands: Commands,
+    query: Query<(Entity, &GlobalTransform), Without<Camera>>,
+) {
+    // TODO: Relative to camera
+    for (e, transform) in query.iter() {
+        let distance = transform.translation().distance(Vec3::ZERO);
+        if distance > DESPAWN_RADIUS {
+            commands.entity(e)
+                .despawn_recursive();
+        }
     }
 }
 
