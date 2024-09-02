@@ -30,7 +30,7 @@ impl Plugin for GamePlugin {
             .add_plugins(CollisionPlugin)
             .add_plugins(DebugPlugin)
             .add_systems(Update, exit_on_esc_system)
-        .add_systems(Update, despawn_out_of_area);
+            .add_systems(Update, despawn_out_of_area);
     }
 }
 

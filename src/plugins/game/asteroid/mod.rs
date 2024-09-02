@@ -7,7 +7,6 @@ use rand::Rng;
 use std::ops::Range;
 use bevy::a11y::accesskit::Size;
 use bevy::render::mesh::VertexAttributeValues;
-use log::log;
 use crate::plugins::game::collision::Colliders;
 
 pub struct AsteroidPlugin;

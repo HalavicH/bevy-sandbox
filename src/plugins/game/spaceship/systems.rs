@@ -4,7 +4,11 @@ use crate::plugins::game::movement::MovingObjectBundle;
 use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
 use bevy::prelude::*;
 use std::f32::consts::FRAC_PI_2;
+use std::thread;
+use std::time::Duration;
 use bevy::a11y::accesskit::Size;
+use bevy::asset::LoadState;
+use bevy::render::mesh::VertexAttributeValues;
 use crate::plugins::game::collision::Colliders;
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
@@ -13,6 +17,27 @@ const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
 const SPACESHIP_SPEED_SCALAR: f32 = 25.0;
 const SPACESHIP_ROTATION_SCALAR: f32 = 2.5;
 const SPACESHIP_ROLL_SCALAR: f32 = 5.0;
+
+#[derive(Component)]
+struct LazyLoad;
+
+fn calculate_bounding_box(mesh: &Mesh) -> (Vec3, Vec3) {
+    let positions = match mesh.attribute(Mesh::ATTRIBUTE_POSITION) {
+        Some(VertexAttributeValues::Float32x3(positions)) => positions,
+        _ => panic!("Mesh does not have positions"),
+    };
+
+    let mut min = Vec3::splat(f32::MAX);
+    let mut max = Vec3::splat(f32::MIN);
+
+    for &position in positions.iter() {
+        let position = Vec3::from(position);
+        min = min.min(position);
+        max = max.max(position);
+    }
+
+    (min, max)
+}
 
 pub fn spawn_spaceship(
     mut commands: Commands,
@@ -100,7 +125,7 @@ pub fn fire_projectile(
 ) {
     let spaceship_transform = query.single();
     const PROJ_SPEED: f32 = 50.0;
-    const NOSE_OFFSET: f32 = 10.0;
+    const NOSE_OFFSET: f32 = 8.0;
     const PROJ_SCALE_FACTOR: Vec3 = Vec3::splat(0.5);
 
     timer.value.tick(time.delta());
@@ -124,7 +149,7 @@ pub fn fire_projectile(
 
     let handle = game_assets.get_projectile();
     // let model_size = game_assets.get_model_size(handle);
-    let colliders = Colliders::new(Size { width: 5.0, height: 5.0 });
+    let colliders = Colliders::new(Size { width: 1.0, height: 3.0 });
     commands
         .spawn(MovingObjectBundle {
             velocity: Velocity::new(spaceship_forward_direction * PROJ_SPEED),
