@@ -5,9 +5,8 @@ use bevy::prelude::*;
 use rand::prelude::ThreadRng;
 use rand::Rng;
 use std::ops::Range;
-use bevy::a11y::accesskit::Size;
 use bevy::render::mesh::VertexAttributeValues;
-use crate::plugins::game::collision::Colliders;
+use crate::plugins::game::collision::{Colliders, Size};
 
 pub struct AsteroidPlugin;
 
@@ -20,7 +19,8 @@ const SPAWN_RANGE_EXCLUSION_Y: Range<f32> = -5.0..5.0;
 const VELOCITY_SCALAR: f32 = 5.0;
 const ACCELERATION_SCALAR: f32 = 5.0;
 
-#[derive(Component, Debug)]
+#[derive(Component, Default, Clone, Reflect)]
+#[reflect(Component, Default)]
 pub struct Asteroid;
 
 #[derive(Resource, Debug)]

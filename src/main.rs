@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use blenvy::BlenvyPlugin;
 use bevy_sandbox::plugins::game::GamePlugin;
 
 fn main() {

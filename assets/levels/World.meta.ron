@@ -1,0 +1,10 @@
+(
+  assets:
+   [ 
+    ("SpaceJunk", File ( path: "blueprints/SpaceJunk.glb" )),
+    ("Plannet", File ( path: "blueprints/Plannet.glb" )),
+    ("Blue gooe", File ( path: "materials/Blue gooe.glb" )),
+    ("Rock", File ( path: "blueprints/Rock.glb" )),
+    ("Atlas", File ( path: "materials/Atlas.glb" )),
+   ]
+)

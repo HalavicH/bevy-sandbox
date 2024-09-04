@@ -1,11 +1,19 @@
-use bevy::a11y::accesskit::Size;
 use bevy::prelude::*;
 use bevy::utils::HashMap;
+use blenvy::*;
 
-#[derive(Component, Default)]
+#[derive(Component, Default, Clone, Reflect)]
+#[reflect(Component, Default)]
 pub struct Colliders {
     pub size: Size,
     pub colliding_with: Vec<Entity>,
+}
+
+#[derive(Default, Clone, Reflect)]
+#[reflect(Default)]
+pub struct Size {
+    pub width: f64,
+    pub height: f64,
 }
 
 impl Colliders {

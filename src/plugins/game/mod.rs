@@ -1,10 +1,10 @@
 use crate::plugins::game::assets::GameAssetsPlugin;
 use crate::plugins::game::asteroid::AsteroidPlugin;
-use crate::plugins::game::movement::{MovementPlugin, MovingObjectBundle};
+use crate::plugins::game::blenvy::BlenvyInitializerPlugin;
+use crate::plugins::game::collision::CollisionPlugin;
+use crate::plugins::game::movement::MovementPlugin;
 use crate::plugins::game::spaceship::SpaceshipPlugin;
 use bevy::prelude::*;
-use crate::plugins::game::collision::CollisionPlugin;
-use crate::plugins::game::debug::DebugPlugin;
 
 mod assets;
 mod asteroid;
@@ -12,6 +12,8 @@ mod debug;
 mod movement;
 mod spaceship;
 mod collision;
+mod blenvy;
+
 
 pub struct GamePlugin;
 
@@ -23,12 +25,13 @@ impl Plugin for GamePlugin {
                 color: Color::default(),
                 brightness: 1000.0,
             })
+            .add_plugins(BlenvyInitializerPlugin)
             .add_plugins(GameAssetsPlugin)
             .add_plugins(SpaceshipPlugin)
             .add_plugins(AsteroidPlugin)
             .add_plugins(MovementPlugin)
             .add_plugins(CollisionPlugin)
-            .add_plugins(DebugPlugin)
+            // .add_plugins(DebugPlugin)
             .add_systems(Update, exit_on_esc_system)
             .add_systems(Update, despawn_out_of_area);
     }

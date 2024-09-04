@@ -6,10 +6,9 @@ use bevy::prelude::*;
 use std::f32::consts::FRAC_PI_2;
 use std::thread;
 use std::time::Duration;
-use bevy::a11y::accesskit::Size;
 use bevy::asset::LoadState;
 use bevy::render::mesh::VertexAttributeValues;
-use crate::plugins::game::collision::Colliders;
+use crate::plugins::game::collision::{Colliders, Size};
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
 const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
@@ -18,7 +17,8 @@ const SPACESHIP_SPEED_SCALAR: f32 = 25.0;
 const SPACESHIP_ROTATION_SCALAR: f32 = 2.5;
 const SPACESHIP_ROLL_SCALAR: f32 = 5.0;
 
-#[derive(Component)]
+#[derive(Component, Default, Clone, Reflect)]
+#[reflect(Component, Default)]
 struct LazyLoad;
 
 fn calculate_bounding_box(mesh: &Mesh) -> (Vec3, Vec3) {

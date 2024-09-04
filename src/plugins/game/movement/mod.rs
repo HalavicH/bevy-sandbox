@@ -1,3 +1,4 @@
+use std::f32::consts::TAU;
 use crate::plugins::game::movement::components::{Acceleration, SpinVelocity, Velocity};
 use bevy::prelude::*;
 use crate::plugins::game::collision::Colliders;
@@ -41,7 +42,8 @@ pub fn update_position(time: Res<Time>, mut query: Query<(&Velocity, &mut Transf
 
 pub fn update_rotation(time: Res<Time>, mut query: Query<(&SpinVelocity, &mut Transform)>) {
     for (spin_velocity, mut transform) in query.iter_mut() {
-        transform.rotation *=
-            Quat::from_axis_angle(spin_velocity.value * time.delta_seconds(), 5.5);
+        transform.rotate_local_x(spin_velocity.value.x * time.delta_seconds() * TAU);
+        transform.rotate_local_y(spin_velocity.value.y * time.delta_seconds() * TAU);
+        transform.rotate_local_z(spin_velocity.value.z * time.delta_seconds() * TAU);
     }
 }
