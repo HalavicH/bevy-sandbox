@@ -14,5 +14,7 @@
     ("Blue gooe.003", File ( path: "materials/Blue gooe.003.glb" )),
     ("Plannet.004", File ( path: "blueprints/Plannet.glb" )),
     ("Blue gooe.004", File ( path: "materials/Blue gooe.004.glb" )),
+    ("Spaceship", File ( path: "blueprints/Spaceship.glb" )),
+    ("Atlas.001", File ( path: "materials/Atlas.001.glb" )),
    ]
 )

@@ -1,5 +1,5 @@
 use crate::plugins::game::assets::GameAssets;
-use crate::plugins::game::movement::components::Velocity;
+use crate::plugins::game::movement::components::{Acceleration, Velocity};
 use crate::plugins::game::movement::MovingObjectBundle;
 use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
 use bevy::prelude::*;
@@ -8,6 +8,7 @@ use std::thread;
 use std::time::Duration;
 use bevy::asset::LoadState;
 use bevy::render::mesh::VertexAttributeValues;
+use blenvy::{BluePrintBundle, BlueprintInfo, SpawnBlueprint};
 use crate::plugins::game::collision::{Colliders, Size};
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
@@ -39,35 +40,56 @@ fn calculate_bounding_box(mesh: &Mesh) -> (Vec3, Vec3) {
     (min, max)
 }
 
-pub fn spawn_spaceship(
-    mut commands: Commands,
-    game_assets: Res<GameAssets>,
-) {
+pub fn spawn_spaceship_from_blueprint_example(mut commands: Commands) {
     commands
-        .spawn(MovingObjectBundle {
-            velocity: Velocity {
+        .spawn((
+            BlueprintInfo {
+                name: "Spaceship".into(),
+                path: "blueprints/Spaceship.glb".into(),
+            },
+            SpawnBlueprint::default(),
+            Velocity {
                 value: STARTING_VELOCITY,
             },
-            acceleration: Default::default(),
-            model: SceneBundle {
-                scene: game_assets.get_spaceship(),
-                transform: Transform::from_translation(STARTING_TRANSLATION),
-                global_transform: Default::default(),
-                visibility: Default::default(),
-                inherited_visibility: Default::default(),
-                view_visibility: Default::default(),
-            },
-            colliders: Colliders::new(Size { width: 5.0, height: 5.0 }),
-        })
+            Acceleration::default(),
+            Colliders::new(Size { width: 5.0, height: 5.0 }),
+            Transform::from_translation(STARTING_TRANSLATION),
+        ))
         .insert(Spaceship);
 }
+
+// pub fn spawn_spaceship(
+//     mut commands: Commands,
+//     game_assets: Res<GameAssets>,
+// ) {
+//     commands
+//         .spawn(MovingObjectBundle {
+//             velocity: Velocity {
+//                 value: STARTING_VELOCITY,
+//             },
+//             acceleration: Default::default(),
+//             model: SceneBundle {
+//                 scene: game_assets.get_spaceship(),
+//                 transform: Transform::from_translation(STARTING_TRANSLATION),
+//                 global_transform: Default::default(),
+//                 visibility: Default::default(),
+//                 inherited_visibility: Default::default(),
+//                 view_visibility: Default::default(),
+//             },
+//             colliders: Colliders::new(Size { width: 5.0, height: 5.0 }),
+//         })
+//         .insert(Spaceship);
+// }
 
 pub fn move_spaceship(
     input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut query: Query<(&mut Velocity, &mut Transform), With<Spaceship>>,
 ) {
-    let (mut velocity, mut transform) = query.single_mut();
+    let Ok((mut velocity, mut transform)) = query.get_single_mut() else {
+        debug!("Spaceship not found or multiple spaceships found");
+        return;
+    };
 
     let mut rotation = 0.0;
     let mut roll = 0.0;
@@ -123,7 +145,11 @@ pub fn fire_projectile(
     mut timer: ResMut<ProjectileTimer>,
     time: Res<Time>,
 ) {
-    let spaceship_transform = query.single();
+    let Ok(spaceship_transform) = query.get_single() else {
+        debug!("Spaceship not found or multiple spaceships found");
+        return;
+    };
+
     const PROJ_SPEED: f32 = 50.0;
     const NOSE_OFFSET: f32 = 8.0;
     const PROJ_SCALE_FACTOR: Vec3 = Vec3::splat(0.5);

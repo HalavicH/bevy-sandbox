@@ -32,20 +32,47 @@ impl Plugin for GamePlugin {
             .add_plugins(MovementPlugin)
             .add_plugins(CollisionPlugin)
             // .add_plugins(DebugPlugin)
+            // Startup systems
+            .add_systems(Startup, spawn_camera)
+            // Update systems
+            .add_systems(Update, fly_camera)
             .add_systems(Update, exit_on_esc_system)
             .add_systems(Update, despawn_out_of_area);
     }
 }
 
-const DESPAWN_RADIUS: f32 = 200.0;
+const CAMERA_DISTANCE: f32 = 200.0;
+
+#[derive(Component)]
+pub struct MainCamera;
+
+fn spawn_camera(mut commands: Commands) {
+    commands.spawn(Camera3dBundle {
+        transform: Transform::from_translation(Vec3::new(0.0, CAMERA_DISTANCE, 0.0)).looking_at(Vec3::ZERO, -Vec3::Z),
+        ..Default::default()
+    }).insert(MainCamera);
+}
+
+const CAMERA_SPEED: f32 = 10.0;
+fn fly_camera(
+    time: Res<Time>,
+    mut query: Query<&mut Transform, With<(MainCamera)>>,
+) {
+    let mut camera_transform = query.single_mut();
+    camera_transform.translation.z += -CAMERA_SPEED * time.delta_seconds();
+}
+
+
+const DESPAWN_X: f32 = 200.0;
 fn despawn_out_of_area(
     mut commands: Commands,
     query: Query<(Entity, &GlobalTransform), Without<Camera>>,
 ) {
     // TODO: Relative to camera
     for (e, transform) in query.iter() {
-        let distance = transform.translation().distance(Vec3::ZERO);
-        if distance > DESPAWN_RADIUS {
+        let tr_x = &transform.translation().x;
+        let distance = tr_x.abs();
+        if distance > DESPAWN_X {
             commands.entity(e)
                 .despawn_recursive();
         }
