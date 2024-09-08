@@ -1,10 +1,18 @@
 (
   assets:
    [ 
-    ("SpaceJunk", File ( path: "blueprints/SpaceJunk.glb" )),
     ("Plannet", File ( path: "blueprints/Plannet.glb" )),
     ("Blue gooe", File ( path: "materials/Blue gooe.glb" )),
     ("Rock", File ( path: "blueprints/Rock.glb" )),
     ("Atlas", File ( path: "materials/Atlas.glb" )),
+    ("SpaceJunk", File ( path: "blueprints/SpaceJunk.glb" )),
+    ("Plannet.001", File ( path: "blueprints/Plannet.glb" )),
+    ("Blue gooe.001", File ( path: "materials/Blue gooe.001.glb" )),
+    ("Plannet.002", File ( path: "blueprints/Plannet.glb" )),
+    ("Blue gooe.002", File ( path: "materials/Blue gooe.002.glb" )),
+    ("Plannet.003", File ( path: "blueprints/Plannet.glb" )),
+    ("Blue gooe.003", File ( path: "materials/Blue gooe.003.glb" )),
+    ("Plannet.004", File ( path: "blueprints/Plannet.glb" )),
+    ("Blue gooe.004", File ( path: "materials/Blue gooe.004.glb" )),
    ]
 )
