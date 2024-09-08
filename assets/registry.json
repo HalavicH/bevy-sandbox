@@ -8845,11 +8845,17 @@
           "type": {
             "$ref": "#/$defs/f32"
           }
+        },
+        "rotation_time_sec": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
         }
       },
       "required": [
         "path_radius",
-        "orbit_vector"
+        "orbit_vector",
+        "rotation_time_sec"
       ],
       "short_name": "EyeBotEnemy",
       "type": "object",
