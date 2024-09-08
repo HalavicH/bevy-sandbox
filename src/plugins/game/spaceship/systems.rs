@@ -1,7 +1,7 @@
 use crate::plugins::game::assets::GameAssets;
 use crate::plugins::game::movement::components::{Acceleration, Velocity};
 use crate::plugins::game::movement::MovingObjectBundle;
-use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
+use crate::plugins::game::spaceship::components::{PlayerStats, Projectile, Spaceship};
 use bevy::prelude::*;
 use std::f32::consts::FRAC_PI_2;
 use std::thread;
@@ -144,6 +144,7 @@ pub fn fire_projectile(
     input: Res<ButtonInput<KeyCode>>,
     mut timer: ResMut<ProjectileTimer>,
     time: Res<Time>,
+    mut player_stats: ResMut<PlayerStats>
 ) {
     let Ok(spaceship_transform) = query.get_single() else {
         debug!("Spaceship not found or multiple spaceships found");
@@ -162,6 +163,8 @@ pub fn fire_projectile(
     if !timer.value.finished() {
         return;
     }
+
+    player_stats.ammo_left -= 1;
 
     // We negate the forward direction because bevy inverts the z-axis
     let spaceship_forward_direction = -spaceship_transform.forward();

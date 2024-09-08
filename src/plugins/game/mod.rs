@@ -7,12 +7,13 @@ use crate::plugins::game::spaceship::SpaceshipPlugin;
 use bevy::prelude::*;
 use crate::plugins::game::enemy::EnemyPlugin;
 use crate::plugins::game::spaceship::components::Spaceship;
+use crate::plugins::ui::hud::UiPlugin;
 
 mod assets;
 mod asteroid;
 mod debug;
 mod movement;
-mod spaceship;
+pub mod spaceship;
 mod collision;
 mod blenvy;
 mod enemy;
@@ -34,6 +35,7 @@ impl Plugin for GamePlugin {
             .add_plugins(MovementPlugin)
             .add_plugins(CollisionPlugin)
             .add_plugins(EnemyPlugin)
+            .add_plugins(UiPlugin)
             // .add_plugins(DebugPlugin)
             // Startup systems
             .add_systems(Startup, spawn_camera)
@@ -59,7 +61,7 @@ fn spawn_camera(mut commands: Commands) {
 const CAMERA_SPEED: f32 = 10.0;
 fn fly_camera(
     time: Res<Time>,
-    mut camera_query: Query<&mut Transform, (With<(MainCamera)>, Without<Spaceship>)>,
+    mut camera_query: Query<&mut Transform, (With<MainCamera>, Without<Spaceship>)>,
     player_query: Query<&Transform, With<Spaceship>>,
 ) {
     // let mut camera_transform = camera_query.single_mut();

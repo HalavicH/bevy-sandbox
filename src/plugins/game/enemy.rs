@@ -27,7 +27,7 @@ impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app
             // .init_resource()
-            .add_systems(Update, (move_eye_bot_enemy));
+            .add_systems(Update, move_eye_bot_enemy);
     }
 }
 
@@ -68,6 +68,5 @@ pub fn move_eye_bot_enemy(
 
         rotate_eye_bot_enemy_orbit_vector(&mut eb.orbit_vector, &time, rotation_time_sec);
         transform.translation = eb.initial_position.unwrap() + eb.orbit_vector * EYE_BOT_ENEMY_PATH_RADIUS;
-        info!("Moving EyeBotEnemy. Translation: {:?}, global translation: {:?}", transform.translation, gt.translation());
     }
 }

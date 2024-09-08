@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy::utils::HashMap;
-use blenvy::*;
 
 #[derive(Component, Default, Clone, Reflect)]
 #[reflect(Component, Default)]
@@ -35,7 +34,7 @@ impl Plugin for CollisionPlugin {
 
 fn calculate_colliders(mut query: Query<(Entity, &GlobalTransform, &mut Colliders)>) {
     let mut map: HashMap<Entity, Vec<Entity>> = HashMap::new();
-    for (e, t, mut c) in query.iter() {
+    for (e, t, c) in query.iter() {
         for (e2, t2, c2) in query.iter() {
             if e == e2 {
                 continue;
