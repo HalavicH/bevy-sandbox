@@ -5,6 +5,8 @@ use crate::plugins::game::collision::CollisionPlugin;
 use crate::plugins::game::movement::MovementPlugin;
 use crate::plugins::game::spaceship::SpaceshipPlugin;
 use bevy::prelude::*;
+use crate::plugins::game::enemy::EnemyPlugin;
+use crate::plugins::game::spaceship::components::Spaceship;
 
 mod assets;
 mod asteroid;
@@ -13,7 +15,7 @@ mod movement;
 mod spaceship;
 mod collision;
 mod blenvy;
-
+mod enemy;
 
 pub struct GamePlugin;
 
@@ -31,6 +33,7 @@ impl Plugin for GamePlugin {
             .add_plugins(AsteroidPlugin)
             .add_plugins(MovementPlugin)
             .add_plugins(CollisionPlugin)
+            .add_plugins(EnemyPlugin)
             // .add_plugins(DebugPlugin)
             // Startup systems
             .add_systems(Startup, spawn_camera)
@@ -56,10 +59,17 @@ fn spawn_camera(mut commands: Commands) {
 const CAMERA_SPEED: f32 = 10.0;
 fn fly_camera(
     time: Res<Time>,
-    mut query: Query<&mut Transform, With<(MainCamera)>>,
+    mut camera_query: Query<&mut Transform, (With<(MainCamera)>, Without<Spaceship>)>,
+    player_query: Query<&Transform, With<Spaceship>>,
 ) {
-    let mut camera_transform = query.single_mut();
-    camera_transform.translation.z += -CAMERA_SPEED * time.delta_seconds();
+    // let mut camera_transform = camera_query.single_mut();
+    // camera_transform.translation.z += -CAMERA_SPEED * time.delta_seconds();
+    let player_translation: Vec3 = player_query.get_single()
+        .map(|t| t.translation.clone())
+        .unwrap_or(Vec3::ZERO);
+
+    let mut camera_transform = camera_query.single_mut();
+    camera_transform.translation = player_translation + Vec3::new(0.0, CAMERA_DISTANCE, 0.0);
 }
 
 

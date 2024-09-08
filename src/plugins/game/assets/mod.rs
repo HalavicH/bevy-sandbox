@@ -68,6 +68,7 @@ fn list_asteroid_model_paths() -> Vec<String> {
                 .replace("assets/", "")
                 + "#Scene0"
         })
+        .filter(|path| path.ends_with(".glb#Scene0") || path.ends_with(".gltf#Scene0"))
         .collect();
 
     info!(

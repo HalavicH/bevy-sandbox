@@ -8814,6 +8814,47 @@
       "type": "object",
       "typeInfo": "Struct"
     },
+    "bevy_sandbox::plugins::game::enemy::EnemySpaceship": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_sandbox::plugins::game::enemy::EnemySpaceship",
+      "properties": {},
+      "required": [],
+      "short_name": "EnemySpaceship",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_sandbox::plugins::game::enemy::EyeBotEnemy": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_sandbox::plugins::game::enemy::EyeBotEnemy",
+      "properties": {
+        "initial_position": {
+          "type": {
+            "$ref": "#/$defs/core::option::Option<glam::Vec3>"
+          }
+        },
+        "orbit_vector": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        },
+        "path_radius": {
+          "type": {
+            "$ref": "#/$defs/f32"
+          }
+        }
+      },
+      "required": [
+        "path_radius",
+        "orbit_vector"
+      ],
+      "short_name": "EyeBotEnemy",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
     "bevy_sandbox::plugins::game::movement::components::Acceleration": {
       "additionalProperties": false,
       "isComponent": true,
@@ -13493,6 +13534,33 @@
         }
       ],
       "short_name": "Option<Vec2>",
+      "type": "object",
+      "typeInfo": "Enum"
+    },
+    "core::option::Option<glam::Vec3>": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "core::option::Option<glam::Vec3>",
+      "oneOf": [
+        {
+          "long_name": "None"
+        },
+        {
+          "items": false,
+          "long_name": "Some",
+          "prefixItems": [
+            {
+              "type": {
+                "$ref": "#/$defs/glam::Vec3"
+              }
+            }
+          ],
+          "short_name": "Some",
+          "type": "array",
+          "typeInfo": "Tuple"
+        }
+      ],
+      "short_name": "Option<Vec3>",
       "type": "object",
       "typeInfo": "Enum"
     },
