@@ -27,62 +27,41 @@ fn spawn_ui(
     asset_server: Res<AssetServer>,
     player_stats: Res<PlayerStats>,
 ) {
-    let list_title_style = TextStyle {
-        font: asset_server.load("fonts/0xProtoNerdFont-Regular.ttf"),
-        font_size: 20.0,
-        ..default()
-    };
-    let get_list_title_style = || list_title_style.clone();
-
-    let list_item_style = TextStyle {
-        font: asset_server.load("fonts/0xProtoNerdFont-Regular.ttf"),
-        font_size: 15.0,
-        ..default()
-    };
-    let get_list_item_style = || list_item_style.clone();
+    let styles = Styles::init(&asset_server);
 
     commands
         .spawn(NodeBundle {
-            style: Style {
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                ..Default::default()
-            },
-            background_color: Color::srgba(0.0, 0.0, 0.0, 0.1).into(),
+            style: styles.root_node.clone(),
+            background_color: styles.colors.background.into(),
             ..Default::default()
         })
         .with_children(|root_node| {
             root_node
                 .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Px(200.),
-                        border: UiRect::all(Val::Px(2.)),
-                        flex_direction: FlexDirection::Column,
-                        ..default()
-                    },
-                    background_color: Color::srgba(0.0, 0.0, 0.0, 0.5).into(),
+                    style: styles.stats_box.clone(),
+                    background_color: styles.colors.stats_box.into(),
                     ..default()
                 })
                 .with_children(|stats_box| {
-                    stats_box.spawn_label("Player Stats:", get_list_title_style());
+                    stats_box.spawn_label("Player Stats:", styles.list_title.clone());
                     stats_box
                         .spawn_label(
                             &format!("Health: {}", player_stats.health),
-                            get_list_item_style(),
+                            styles.list_item.clone(),
                         )
                         .insert(HealthLabel);
 
                     stats_box
                         .spawn_label(
                             &format!("Score: {}", player_stats.score),
-                            get_list_item_style(),
+                            styles.list_item.clone(),
                         )
                         .insert(ScoreLabel);
 
                     stats_box
                         .spawn_label(
                             &format!("Ammo: {}", player_stats.ammo_left),
-                            get_list_item_style(),
+                            styles.list_item.clone(),
                         )
                         .insert(AmmoLabel);
                 });
@@ -110,6 +89,51 @@ fn update_player_hud_ui(
             text.sections[0].value = format!("Score: {}", player_stats.score);
         } else if ammo_label.is_some() {
             text.sections[0].value = format!("Ammo: {}", player_stats.ammo_left);
+        }
+    }
+}
+
+pub struct Colors {
+    pub background: Color,
+    pub stats_box: Color,
+}
+
+pub struct Styles {
+    pub colors: Colors,
+    pub root_node: Style,
+    pub stats_box: Style,
+    pub list_title: TextStyle,
+    pub list_item: TextStyle,
+}
+
+impl Styles {
+    pub fn init(asset_server: &Res<AssetServer>) -> Self {
+        Self {
+            colors: Colors {
+                background: Color::srgba(0.0, 0.0, 0.0, 0.1),
+                stats_box: Color::srgba(0.0, 0.0, 0.0, 0.5),
+            },
+            root_node: Style {
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                ..Default::default()
+            },
+            stats_box: Style {
+                width: Val::Px(200.),
+                border: UiRect::all(Val::Px(2.)),
+                flex_direction: FlexDirection::Column,
+                ..default()
+            },
+            list_title: TextStyle {
+                font: asset_server.load("fonts/0xProtoNerdFont-Regular.ttf"),
+                font_size: 20.0,
+                ..default()
+            },
+            list_item: TextStyle {
+                font: asset_server.load("fonts/0xProtoNerdFont-Regular.ttf"),
+                font_size: 15.0,
+                ..default()
+            },
         }
     }
 }
