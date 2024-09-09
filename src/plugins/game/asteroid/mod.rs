@@ -1,12 +1,11 @@
 use crate::plugins::game::assets::GameAssets;
+use crate::plugins::game::collision::{Colliders, Size};
 use crate::plugins::game::movement::components::{Acceleration, Velocity};
 use crate::plugins::game::movement::MovingObjectBundle;
 use bevy::prelude::*;
 use rand::prelude::ThreadRng;
 use rand::Rng;
 use std::ops::Range;
-use bevy::render::mesh::VertexAttributeValues;
-use crate::plugins::game::collision::{Colliders, Size};
 
 pub struct AsteroidPlugin;
 
@@ -79,7 +78,10 @@ pub fn spawn_asteroid(
 
     let handle = game_assets.get_random_asteroid();
     // TODO: Calc based on mesh size
-    let size = Size { width: 5.0, height: 5.0 };
+    let size = Size {
+        width: 5.0,
+        height: 5.0,
+    };
     commands
         .spawn(MovingObjectBundle {
             velocity: Velocity { value: velocity },
@@ -117,16 +119,17 @@ fn rand_within_range(range: Range<f32>) -> f32 {
 
 fn despawn_on_collision(
     mut commands: Commands,
-    query: Query<(Entity, &Colliders), With<Asteroid>>)
-{
+    query: Query<(Entity, &Colliders), With<Asteroid>>,
+) {
     for (e, c) in query.iter() {
         if c.colliding_with.is_empty() {
             continue;
         }
 
-        info!("Asteroid collided with {:?}. Despawning...", c.colliding_with);
-        commands.entity(e)
-            .despawn_recursive()
+        info!(
+            "Asteroid collided with {:?}. Despawning...",
+            c.colliding_with
+        );
+        commands.entity(e).despawn_recursive()
     }
 }
-

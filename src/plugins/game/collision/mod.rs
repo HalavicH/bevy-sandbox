@@ -42,9 +42,7 @@ fn calculate_colliders(mut query: Query<(Entity, &GlobalTransform, &mut Collider
             if !colliding((t, &c.size), (t2, &c2.size)) {
                 continue;
             }
-            map.entry(e)
-                .or_insert_with(Vec::new)
-                .push(e2);
+            map.entry(e).or_insert_with(Vec::new).push(e2);
         }
     }
 
@@ -57,10 +55,7 @@ fn calculate_colliders(mut query: Query<(Entity, &GlobalTransform, &mut Collider
     }
 }
 
-fn colliding(
-    (t1, s1): (&GlobalTransform, &Size),
-    (t2, s2): (&GlobalTransform, &Size),
-) -> bool {
+fn colliding((t1, s1): (&GlobalTransform, &Size), (t2, s2): (&GlobalTransform, &Size)) -> bool {
     let distance = t1.translation().distance(t2.translation()) as f64;
     distance < (s1.width + s2.width) / 2f64 || distance < s1.height + s2.height / 2f64
 }

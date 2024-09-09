@@ -1,6 +1,5 @@
-use std::f32::consts::TAU;
 use bevy::prelude::*;
-use log::info;
+use std::f32::consts::TAU;
 
 #[derive(Component, Default, Clone, Reflect)]
 #[reflect(Component, Default)]
@@ -15,11 +14,9 @@ pub struct EyeBotEnemy {
     pub rotation_time_sec: f32,
 }
 
-
 // #[derive(Component, Default, Clone, Reflect)]
 // #[reflect(Component, Default)]
 // pub struct EnemySpaceship;
-
 
 pub struct EnemyPlugin;
 
@@ -55,10 +52,9 @@ fn rotate_eye_bot_enemy_orbit_vector(orbit_vector: &mut Vec3, time: &Time, rotat
     *orbit_vector = rotation.mul_vec3(*orbit_vector);
 }
 
-
 pub fn move_eye_bot_enemy(
     mut query: Query<(&mut Transform, &GlobalTransform, &mut EyeBotEnemy)>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
     for (mut transform, gt, mut eb) in query.iter_mut() {
         if eb.initial_position.is_none() {
@@ -67,6 +63,7 @@ pub fn move_eye_bot_enemy(
         let rotation_time_sec = eb.rotation_time_sec;
 
         rotate_eye_bot_enemy_orbit_vector(&mut eb.orbit_vector, &time, rotation_time_sec);
-        transform.translation = eb.initial_position.unwrap() + eb.orbit_vector * EYE_BOT_ENEMY_PATH_RADIUS;
+        transform.translation =
+            eb.initial_position.unwrap() + eb.orbit_vector * EYE_BOT_ENEMY_PATH_RADIUS;
     }
 }

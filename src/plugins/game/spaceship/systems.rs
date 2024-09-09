@@ -1,15 +1,12 @@
 use crate::plugins::game::assets::GameAssets;
+use crate::plugins::game::collision::{Colliders, Size};
 use crate::plugins::game::movement::components::{Acceleration, Velocity};
 use crate::plugins::game::movement::MovingObjectBundle;
 use crate::plugins::game::spaceship::components::{PlayerStats, Projectile, Spaceship};
 use bevy::prelude::*;
-use std::f32::consts::FRAC_PI_2;
-use std::thread;
-use std::time::Duration;
-use bevy::asset::LoadState;
 use bevy::render::mesh::VertexAttributeValues;
-use blenvy::{BluePrintBundle, BlueprintInfo, SpawnBlueprint};
-use crate::plugins::game::collision::{Colliders, Size};
+use blenvy::{BlueprintInfo, SpawnBlueprint};
+use std::f32::consts::FRAC_PI_2;
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
 const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
@@ -47,12 +44,15 @@ pub fn spawn_spaceship_from_blueprint_example(mut commands: Commands) {
                 name: "Spaceship".into(),
                 path: "blueprints/Spaceship.glb".into(),
             },
-            SpawnBlueprint::default(),
+            SpawnBlueprint,
             Velocity {
                 value: STARTING_VELOCITY,
             },
             Acceleration::default(),
-            Colliders::new(Size { width: 5.0, height: 5.0 }),
+            Colliders::new(Size {
+                width: 5.0,
+                height: 5.0,
+            }),
             Transform::from_translation(STARTING_TRANSLATION),
         ))
         .insert(Spaceship);
@@ -144,7 +144,7 @@ pub fn fire_projectile(
     input: Res<ButtonInput<KeyCode>>,
     mut timer: ResMut<ProjectileTimer>,
     time: Res<Time>,
-    mut player_stats: ResMut<PlayerStats>
+    mut player_stats: ResMut<PlayerStats>,
 ) {
     let Ok(spaceship_transform) = query.get_single() else {
         debug!("Spaceship not found or multiple spaceships found");
@@ -178,7 +178,10 @@ pub fn fire_projectile(
 
     let handle = game_assets.get_projectile();
     // let model_size = game_assets.get_model_size(handle);
-    let colliders = Colliders::new(Size { width: 1.0, height: 3.0 });
+    let colliders = Colliders::new(Size {
+        width: 1.0,
+        height: 3.0,
+    });
     commands
         .spawn(MovingObjectBundle {
             velocity: Velocity::new(spaceship_forward_direction * PROJ_SPEED),

@@ -1,10 +1,10 @@
-use bevy::prelude::*;
-use blenvy::*;
 use crate::plugins::game::asteroid::Asteroid;
 use crate::plugins::game::collision::Colliders;
 use crate::plugins::game::enemy::{EnemySpaceship, EyeBotEnemy};
 use crate::plugins::game::movement::components::{Acceleration, SpinVelocity, Velocity};
 use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
+use bevy::prelude::*;
+use blenvy::*;
 
 pub struct BlenvyInitializerPlugin;
 
@@ -23,7 +23,6 @@ impl Plugin for BlenvyInitializerPlugin {
             .register_type::<Asteroid>()
             .add_systems(Startup, setup)
             .add_plugins(BlenvyPlugin::default());
-
     }
 }
 

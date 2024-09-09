@@ -2,28 +2,27 @@ use crate::plugins::game::assets::GameAssetsPlugin;
 use crate::plugins::game::asteroid::AsteroidPlugin;
 use crate::plugins::game::blenvy::BlenvyInitializerPlugin;
 use crate::plugins::game::collision::CollisionPlugin;
-use crate::plugins::game::movement::MovementPlugin;
-use crate::plugins::game::spaceship::SpaceshipPlugin;
-use bevy::prelude::*;
 use crate::plugins::game::enemy::EnemyPlugin;
+use crate::plugins::game::movement::MovementPlugin;
 use crate::plugins::game::spaceship::components::Spaceship;
+use crate::plugins::game::spaceship::SpaceshipPlugin;
 use crate::plugins::ui::hud::UiPlugin;
+use bevy::prelude::*;
 
 mod assets;
 mod asteroid;
+mod blenvy;
+mod collision;
 mod debug;
+mod enemy;
 mod movement;
 pub mod spaceship;
-mod collision;
-mod blenvy;
-mod enemy;
 
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app
-            .insert_resource(ClearColor(Color::srgb(0.08, 0.01, 0.1)))
+        app.insert_resource(ClearColor(Color::srgb(0.08, 0.01, 0.1)))
             .insert_resource(AmbientLight {
                 color: Color::default(),
                 brightness: 1000.0,
@@ -52,10 +51,13 @@ const CAMERA_DISTANCE: f32 = 200.0;
 pub struct MainCamera;
 
 fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_translation(Vec3::new(0.0, CAMERA_DISTANCE, 0.0)).looking_at(Vec3::ZERO, -Vec3::Z),
-        ..Default::default()
-    }).insert(MainCamera);
+    commands
+        .spawn(Camera3dBundle {
+            transform: Transform::from_translation(Vec3::new(0.0, CAMERA_DISTANCE, 0.0))
+                .looking_at(Vec3::ZERO, -Vec3::Z),
+            ..Default::default()
+        })
+        .insert(MainCamera);
 }
 
 const CAMERA_SPEED: f32 = 10.0;
@@ -66,14 +68,14 @@ fn fly_camera(
 ) {
     // let mut camera_transform = camera_query.single_mut();
     // camera_transform.translation.z += -CAMERA_SPEED * time.delta_seconds();
-    let player_translation: Vec3 = player_query.get_single()
-        .map(|t| t.translation.clone())
+    let player_translation: Vec3 = player_query
+        .get_single()
+        .map(|t| t.translation)
         .unwrap_or(Vec3::ZERO);
 
     let mut camera_transform = camera_query.single_mut();
     camera_transform.translation = player_translation + Vec3::new(0.0, CAMERA_DISTANCE, 0.0);
 }
-
 
 const DESPAWN_X: f32 = 200.0;
 fn despawn_out_of_area(
@@ -85,8 +87,7 @@ fn despawn_out_of_area(
         let tr_x = &transform.translation().x;
         let distance = tr_x.abs();
         if distance > DESPAWN_X {
-            commands.entity(e)
-                .despawn_recursive();
+            commands.entity(e).despawn_recursive();
         }
     }
 }

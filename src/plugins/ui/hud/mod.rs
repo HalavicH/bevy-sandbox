@@ -41,35 +41,49 @@ fn spawn_ui(
     };
     let get_list_item_style = || list_item_style.clone();
 
-    commands.spawn(NodeBundle {
-        style: Style {
-            justify_content: JustifyContent::Center,
-            align_items: AlignItems::Center,
+    commands
+        .spawn(NodeBundle {
+            style: Style {
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                ..Default::default()
+            },
+            background_color: BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.5)),
             ..Default::default()
-        },
-        background_color: BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.5)),
-        ..Default::default()
-    })
+        })
         .with_children(|root_node| {
-            root_node.spawn(NodeBundle {
-                style: Style {
-                    width: Val::Px(200.),
-                    border: UiRect::all(Val::Px(2.)),
-                    flex_direction: FlexDirection::Column,
+            root_node
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Px(200.),
+                        border: UiRect::all(Val::Px(2.)),
+                        flex_direction: FlexDirection::Column,
+                        ..default()
+                    },
+                    background_color: Color::srgb(0.65, 0.65, 0.65).into(),
                     ..default()
-                },
-                background_color: Color::srgb(0.65, 0.65, 0.65).into(),
-                ..default()
-            })
+                })
                 .with_children(|stats_box| {
                     stats_box.spawn_label("Player Stats:", get_list_title_style());
-                    stats_box.spawn_label(&format!("Health: {}", player_stats.health), get_list_item_style())
+                    stats_box
+                        .spawn_label(
+                            &format!("Health: {}", player_stats.health),
+                            get_list_item_style(),
+                        )
                         .insert(HealthLabel);
 
-                    stats_box.spawn_label(&format!("Score: {}", player_stats.score), get_list_item_style())
+                    stats_box
+                        .spawn_label(
+                            &format!("Score: {}", player_stats.score),
+                            get_list_item_style(),
+                        )
                         .insert(ScoreLabel);
 
-                    stats_box.spawn_label(&format!("Ammo: {}", player_stats.ammo_left), get_list_item_style())
+                    stats_box
+                        .spawn_label(
+                            &format!("Ammo: {}", player_stats.ammo_left),
+                            get_list_item_style(),
+                        )
                         .insert(AmmoLabel);
                 });
         });
@@ -77,7 +91,10 @@ fn spawn_ui(
 
 fn update_player_hud_ui(
     player_stats: Res<PlayerStats>,
-    mut health_query: Query<&mut Text, (With<HealthLabel>, Without<ScoreLabel>, Without<AmmoLabel>)>,
+    mut health_query: Query<
+        &mut Text,
+        (With<HealthLabel>, Without<ScoreLabel>, Without<AmmoLabel>),
+    >,
     mut score_query: Query<&mut Text, (With<ScoreLabel>, Without<HealthLabel>, Without<AmmoLabel>)>,
     mut ammo_query: Query<&mut Text, (With<AmmoLabel>, Without<HealthLabel>, Without<ScoreLabel>)>,
 ) {

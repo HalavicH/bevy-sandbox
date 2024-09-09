@@ -1,7 +1,7 @@
-use std::f32::consts::TAU;
+use crate::plugins::game::collision::Colliders;
 use crate::plugins::game::movement::components::{Acceleration, SpinVelocity, Velocity};
 use bevy::prelude::*;
-use crate::plugins::game::collision::Colliders;
+use std::f32::consts::TAU;
 
 pub mod components;
 
@@ -17,14 +17,7 @@ pub struct MovingObjectBundle {
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (
-                update_velocity,
-                update_position,
-                update_rotation,
-            ),
-        );
+        app.add_systems(Update, (update_velocity, update_position, update_rotation));
     }
 }
 
