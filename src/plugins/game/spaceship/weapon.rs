@@ -76,6 +76,13 @@ impl WeaponType {
             WeaponType::Missile => 1.,
         }
     }
+
+    pub fn to_string(&self) -> String {
+        match self {
+            WeaponType::Bullet => "Bullet".to_string(),
+            WeaponType::Missile => "Missile".to_string(),
+        }
+    }
 }
 
 #[derive(Component, Default, Debug, Clone, Reflect)]
@@ -156,7 +163,8 @@ pub fn fire_weapon(
             Projectile {
                 weapon_type: weapon_type.clone(),
                 spawned_at,
-            }
+            },
+            Name::new(weapon_type.to_string()),
         ));
 }
 
