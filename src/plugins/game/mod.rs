@@ -41,6 +41,8 @@ impl Plugin for GamePlugin {
             // Update systems
             .add_systems(Update, fly_camera)
             .add_systems(Update, exit_on_esc_system)
+            .init_resource::<DespawnTimer>()
+            .register_type::<DespawnTimer>()
             .add_systems(Update, despawn_out_of_area);
     }
 }
@@ -75,20 +77,47 @@ fn fly_camera(
     camera_transform.translation = player_translation + Vec3::new(0.0, CAMERA_DISTANCE, 0.0);
 }
 
+#[derive(Resource, Reflect)]
+#[reflect(Resource)]
+pub struct DespawnTimer(Timer);
+
+impl Default for DespawnTimer {
+    fn default() -> Self {
+        Self(Timer::from_seconds(0.5, TimerMode::Repeating))
+    }
+}
+
+#[derive(Component, Reflect, Default)]
+#[reflect(Component)]
+pub struct DeletableByDistance {
+    pub deleted: bool,
+}
+
 const DESPAWN_X: f32 = 200.0;
 fn despawn_out_of_area(
     mut commands: Commands,
-    query: Query<(Entity, &GlobalTransform), Without<Camera>>,
+    mut query: Query<(Entity, &GlobalTransform, &mut DeletableByDistance)>,
+    mut timer: ResMut<DespawnTimer>,
+    time: Res<Time>,
 ) {
-    if true {
+    timer.0.tick(time.delta());
+    if !timer.0.finished() {
         return;
-    };
-    // TODO: Relative to camera
-    for (e, transform) in query.iter() {
+    }
+
+    for (e, transform, mut marked) in query.iter_mut() {
         let tr_x = &transform.translation().x;
         let distance = tr_x.abs();
-        if distance > DESPAWN_X {
-            commands.entity(e).despawn_recursive();
+        if distance <= DESPAWN_X {
+            continue;
+        }
+        let Some(mut entity) = commands.get_entity(e) else {
+            continue;
+        };
+
+        if !marked.deleted {
+            marked.deleted = true;
+            entity.despawn_recursive();
         }
     }
 }

@@ -8777,6 +8777,22 @@
       "type": "array",
       "typeInfo": "TupleStruct"
     },
+    "bevy_sandbox::plugins::game::DespawnTimer": {
+      "isComponent": false,
+      "isResource": true,
+      "items": false,
+      "long_name": "bevy_sandbox::plugins::game::DespawnTimer",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_time::timer::Timer"
+          }
+        }
+      ],
+      "short_name": "DespawnTimer",
+      "type": "array",
+      "typeInfo": "TupleStruct"
+    },
     "bevy_sandbox::plugins::game::asteroid::Asteroid": {
       "additionalProperties": false,
       "isComponent": true,
@@ -8787,6 +8803,22 @@
       "short_name": "Asteroid",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_sandbox::plugins::game::asteroid::AsteroidSpawnTimer": {
+      "isComponent": false,
+      "isResource": true,
+      "items": false,
+      "long_name": "bevy_sandbox::plugins::game::asteroid::AsteroidSpawnTimer",
+      "prefixItems": [
+        {
+          "type": {
+            "$ref": "#/$defs/bevy_time::timer::Timer"
+          }
+        }
+      ],
+      "short_name": "AsteroidSpawnTimer",
+      "type": "array",
+      "typeInfo": "TupleStruct"
     },
     "bevy_sandbox::plugins::game::collision::Colliders": {
       "additionalProperties": false,

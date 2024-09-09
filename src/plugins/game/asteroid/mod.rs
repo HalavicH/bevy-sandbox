@@ -6,6 +6,7 @@ use bevy::prelude::*;
 use rand::prelude::ThreadRng;
 use rand::Rng;
 use std::ops::Range;
+use crate::plugins::game::DeletableByDistance;
 
 pub struct AsteroidPlugin;
 
@@ -22,16 +23,13 @@ const ACCELERATION_SCALAR: f32 = 5.0;
 #[reflect(Component, Default)]
 pub struct Asteroid;
 
-#[derive(Resource, Debug)]
-pub struct AsteroidSpawnTimer {
-    pub timer: Timer,
-}
+#[derive(Resource, Debug, Reflect)]
+#[reflect(Resource, Default)]
+pub struct AsteroidSpawnTimer(pub Timer);
 
 impl Default for AsteroidSpawnTimer {
     fn default() -> Self {
-        Self {
-            timer: Timer::from_seconds(0.5, TimerMode::Repeating),
-        }
+        Self(Timer::from_seconds(0.5, TimerMode::Repeating))
     }
 }
 
@@ -39,6 +37,7 @@ impl Plugin for AsteroidPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<AsteroidSpawnTimer>()
             .register_type::<Asteroid>()
+            .register_type::<AsteroidSpawnTimer>()
             .add_systems(Update, spawn_asteroid)
             .add_systems(Update, despawn_on_collision);
     }
@@ -50,8 +49,8 @@ pub fn spawn_asteroid(
     mut timer: ResMut<AsteroidSpawnTimer>,
     game_assets: Res<GameAssets>,
 ) {
-    timer.timer.tick(time.delta());
-    if !(timer.timer.finished()) {
+    timer.0.tick(time.delta());
+    if !(timer.0.finished()) {
         return;
     }
 
@@ -84,17 +83,21 @@ pub fn spawn_asteroid(
         height: 5.0,
     };
     commands
-        .spawn(MovingObjectBundle {
-            velocity: Velocity { value: velocity },
-            acceleration: Acceleration::new(acceleration),
-            model: SceneBundle {
-                scene: handle,
-                transform: Transform::from_translation(translation),
-                ..SceneBundle::default()
+        .spawn((
+            MovingObjectBundle {
+                velocity: Velocity { value: velocity },
+                acceleration: Acceleration::new(acceleration),
+                model: SceneBundle {
+                    scene: handle,
+                    transform: Transform::from_translation(translation),
+                    ..SceneBundle::default()
+                },
+                colliders: Colliders::new(size),
             },
-            colliders: Colliders::new(size),
-        })
-        .insert(Asteroid);
+            Asteroid,
+            Name::new("Asteroid"),
+            DeletableByDistance { deleted: false }, // Very bad workaround. TODO: Fix
+        ));
 }
 
 fn gen_asteroid_position(rng: &mut ThreadRng) -> Vec3 {

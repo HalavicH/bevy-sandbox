@@ -6,6 +6,7 @@ use crate::plugins::game::spaceship::{PlayerStats, ProjectileTimer, Spaceship};
 use bevy::prelude::*;
 use std::f32::consts::FRAC_PI_2;
 use std::time::Duration;
+use crate::plugins::game::DeletableByDistance;
 
 #[derive(Component, Default, Clone, Reflect)]
 #[reflect(Component, Default)]
@@ -140,20 +141,23 @@ pub fn fire_weapon(
     let projectile_velocity = spaceship_forward_direction * weapon_type.get_speed();
     let spawned_at = spaceship_transform.translation;
     commands
-        .spawn(MovingObjectBundle {
-            velocity: Velocity::new(projectile_velocity),
-            acceleration: Default::default(),
-            model: SceneBundle {
-                scene: handle,
-                transform,
-                ..SceneBundle::default()
+        .spawn((
+            MovingObjectBundle {
+                velocity: Velocity::new(projectile_velocity),
+                acceleration: Default::default(),
+                model: SceneBundle {
+                    scene: handle,
+                    transform,
+                    ..SceneBundle::default()
+                },
+                colliders,
             },
-            colliders,
-        })
-        .insert(Projectile {
-            weapon_type: weapon_type.clone(),
-            spawned_at,
-        });
+            DeletableByDistance { deleted: false }, // Very bad workaround. TODO: Fix
+            Projectile {
+                weapon_type: weapon_type.clone(),
+                spawned_at,
+            }
+        ));
 }
 
 const NOSE_OFFSET: f32 = 8.0;
