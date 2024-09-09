@@ -2,7 +2,8 @@ use crate::plugins::game::asteroid::Asteroid;
 use crate::plugins::game::collision::Colliders;
 use crate::plugins::game::enemy::{EnemySpaceship, EyeBotEnemy};
 use crate::plugins::game::movement::components::{Acceleration, SpinVelocity, Velocity};
-use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
+use crate::plugins::game::spaceship::weapon::Projectile;
+use crate::plugins::game::spaceship::Spaceship;
 use bevy::prelude::*;
 use blenvy::*;
 

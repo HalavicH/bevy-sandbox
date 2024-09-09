@@ -1,11 +1,19 @@
 use bevy::prelude::*;
 use std::f32::consts::TAU;
 
-#[derive(Component, Default, Clone, Reflect)]
+#[derive(Component, Clone, Reflect)]
 #[reflect(Component, Default)]
-pub struct EnemySpaceship;
+pub struct EnemySpaceship {
+    pub health: i32,
+}
 
-#[derive(Component, Default, Clone, Reflect)]
+impl Default for EnemySpaceship {
+    fn default() -> Self {
+        Self { health: 1 }
+    }
+}
+
+#[derive(Component, Clone, Default, Reflect)]
 #[reflect(Component, Default)]
 pub struct EyeBotEnemy {
     pub path_radius: f32,

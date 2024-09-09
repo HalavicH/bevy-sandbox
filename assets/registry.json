@@ -8819,8 +8819,16 @@
       "isComponent": true,
       "isResource": false,
       "long_name": "bevy_sandbox::plugins::game::enemy::EnemySpaceship",
-      "properties": {},
-      "required": [],
+      "properties": {
+        "health": {
+          "type": {
+            "$ref": "#/$defs/i32"
+          }
+        }
+      },
+      "required": [
+        "health"
+      ],
       "short_name": "EnemySpaceship",
       "type": "object",
       "typeInfo": "Struct"
@@ -8918,27 +8926,53 @@
       "type": "object",
       "typeInfo": "Struct"
     },
-    "bevy_sandbox::plugins::game::spaceship::components::Projectile": {
+    "bevy_sandbox::plugins::game::spaceship::Spaceship": {
       "additionalProperties": false,
       "isComponent": true,
       "isResource": false,
-      "long_name": "bevy_sandbox::plugins::game::spaceship::components::Projectile",
-      "properties": {},
-      "required": [],
-      "short_name": "Projectile",
-      "type": "object",
-      "typeInfo": "Struct"
-    },
-    "bevy_sandbox::plugins::game::spaceship::components::Spaceship": {
-      "additionalProperties": false,
-      "isComponent": true,
-      "isResource": false,
-      "long_name": "bevy_sandbox::plugins::game::spaceship::components::Spaceship",
+      "long_name": "bevy_sandbox::plugins::game::spaceship::Spaceship",
       "properties": {},
       "required": [],
       "short_name": "Spaceship",
       "type": "object",
       "typeInfo": "Struct"
+    },
+    "bevy_sandbox::plugins::game::spaceship::weapon::Projectile": {
+      "additionalProperties": false,
+      "isComponent": true,
+      "isResource": false,
+      "long_name": "bevy_sandbox::plugins::game::spaceship::weapon::Projectile",
+      "properties": {
+        "spawned_at": {
+          "type": {
+            "$ref": "#/$defs/glam::Vec3"
+          }
+        },
+        "weapon_type": {
+          "type": {
+            "$ref": "#/$defs/bevy_sandbox::plugins::game::spaceship::weapon::WeaponType"
+          }
+        }
+      },
+      "required": [
+        "weapon_type",
+        "spawned_at"
+      ],
+      "short_name": "Projectile",
+      "type": "object",
+      "typeInfo": "Struct"
+    },
+    "bevy_sandbox::plugins::game::spaceship::weapon::WeaponType": {
+      "isComponent": false,
+      "isResource": false,
+      "long_name": "bevy_sandbox::plugins::game::spaceship::weapon::WeaponType",
+      "oneOf": [
+        "Bullet",
+        "Missile"
+      ],
+      "short_name": "WeaponType",
+      "type": "string",
+      "typeInfo": "Enum"
     },
     "bevy_sprite::SpriteSource": {
       "additionalProperties": false,

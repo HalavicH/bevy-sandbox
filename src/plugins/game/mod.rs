@@ -4,8 +4,7 @@ use crate::plugins::game::blenvy::BlenvyInitializerPlugin;
 use crate::plugins::game::collision::CollisionPlugin;
 use crate::plugins::game::enemy::EnemyPlugin;
 use crate::plugins::game::movement::MovementPlugin;
-use crate::plugins::game::spaceship::components::Spaceship;
-use crate::plugins::game::spaceship::SpaceshipPlugin;
+use crate::plugins::game::spaceship::{Spaceship, SpaceshipPlugin};
 use crate::plugins::ui::hud::UiPlugin;
 use bevy::prelude::*;
 

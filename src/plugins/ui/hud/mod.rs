@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::plugins::game::spaceship::components::PlayerStats;
+use crate::plugins::game::spaceship::PlayerStats;
 use crate::plugins::ui::helpers::UiBuilder;
 
 // Health element marker
@@ -12,6 +12,9 @@ pub struct ScoreLabel;
 
 #[derive(Component, Default)]
 pub struct AmmoLabel;
+
+#[derive(Component, Default)]
+pub struct WeaponTypeLabel;
 
 pub struct UiPlugin;
 
@@ -58,9 +61,22 @@ fn spawn_ui(
                         )
                         .insert(ScoreLabel);
 
+                    stats_box.spawn_label("Weapon:", styles.list_title.clone());
                     stats_box
                         .spawn_label(
-                            &format!("Ammo: {}", player_stats.ammo_left),
+                            &format!("Type: {:?}", player_stats.active_weapon),
+                            styles.list_item.clone(),
+                        )
+                        .insert(WeaponTypeLabel);
+                    let weapon = player_stats
+                        .weapons
+                        .get(&player_stats.active_weapon)
+                        .expect("Expected weapon");
+                    let max_ammo = weapon.max_ammo;
+                    let ammo_left = weapon.ammo_left;
+                    stats_box
+                        .spawn_label(
+                            &format!("Ammo: {}/{}", ammo_left, max_ammo),
                             styles.list_item.clone(),
                         )
                         .insert(AmmoLabel);
@@ -76,19 +92,26 @@ fn update_player_hud_ui(
         Option<&HealthLabel>,
         Option<&ScoreLabel>,
         Option<&AmmoLabel>,
+        Option<&WeaponTypeLabel>,
     )>,
 ) {
     if !player_stats.is_changed() {
         return;
     }
 
-    for (mut text, health_label, score_label, ammo_label) in query.iter_mut() {
+    for (mut text, health_label, score_label, ammo_label, weapon_label) in query.iter_mut() {
         if health_label.is_some() {
             text.sections[0].value = format!("Health: {}", player_stats.health);
         } else if score_label.is_some() {
             text.sections[0].value = format!("Score: {}", player_stats.score);
+        } else if weapon_label.is_some() {
+            text.sections[0].value = format!("Type: {:?}", player_stats.active_weapon);
         } else if ammo_label.is_some() {
-            text.sections[0].value = format!("Ammo: {}", player_stats.ammo_left);
+            let w = player_stats
+                .weapons
+                .get(&player_stats.active_weapon)
+                .unwrap();
+            text.sections[0].value = format!("Ammo: {}/{}", w.ammo_left, w.max_ammo);
         }
     }
 }
