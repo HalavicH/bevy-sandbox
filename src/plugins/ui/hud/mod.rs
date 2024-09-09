@@ -48,7 +48,7 @@ fn spawn_ui(
                 align_items: AlignItems::Center,
                 ..Default::default()
             },
-            background_color: BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.5)),
+            background_color: Color::srgba(0.0, 0.0, 0.0, 0.1).into(),
             ..Default::default()
         })
         .with_children(|root_node| {
@@ -60,7 +60,7 @@ fn spawn_ui(
                         flex_direction: FlexDirection::Column,
                         ..default()
                     },
-                    background_color: Color::srgb(0.65, 0.65, 0.65).into(),
+                    background_color: Color::srgba(0.0, 0.0, 0.0, 0.5).into(),
                     ..default()
                 })
                 .with_children(|stats_box| {
@@ -89,28 +89,27 @@ fn spawn_ui(
         });
 }
 
+#[allow(clippy::type_complexity)]
 fn update_player_hud_ui(
     player_stats: Res<PlayerStats>,
-    mut health_query: Query<
+    mut query: Query<(
         &mut Text,
-        (With<HealthLabel>, Without<ScoreLabel>, Without<AmmoLabel>),
-    >,
-    mut score_query: Query<&mut Text, (With<ScoreLabel>, Without<HealthLabel>, Without<AmmoLabel>)>,
-    mut ammo_query: Query<&mut Text, (With<AmmoLabel>, Without<HealthLabel>, Without<ScoreLabel>)>,
+        Option<&HealthLabel>,
+        Option<&ScoreLabel>,
+        Option<&AmmoLabel>,
+    )>,
 ) {
     if !player_stats.is_changed() {
         return;
     }
 
-    for mut text in health_query.iter_mut() {
-        text.sections[0].value = format!("Health: {}", player_stats.health);
-    }
-
-    for mut text in score_query.iter_mut() {
-        text.sections[0].value = format!("Score: {}", player_stats.score);
-    }
-
-    for mut text in ammo_query.iter_mut() {
-        text.sections[0].value = format!("Ammo: {}", player_stats.ammo_left);
+    for (mut text, health_label, score_label, ammo_label) in query.iter_mut() {
+        if health_label.is_some() {
+            text.sections[0].value = format!("Health: {}", player_stats.health);
+        } else if score_label.is_some() {
+            text.sections[0].value = format!("Score: {}", player_stats.score);
+        } else if ammo_label.is_some() {
+            text.sections[0].value = format!("Ammo: {}", player_stats.ammo_left);
+        }
     }
 }

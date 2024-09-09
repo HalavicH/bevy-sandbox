@@ -85,9 +85,7 @@ pub fn spawn_asteroid(
     commands
         .spawn(MovingObjectBundle {
             velocity: Velocity { value: velocity },
-            acceleration: Acceleration {
-                value: acceleration,
-            },
+            acceleration: Acceleration::new(acceleration),
             model: SceneBundle {
                 scene: handle,
                 transform: Transform::from_translation(translation),

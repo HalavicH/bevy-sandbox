@@ -13,9 +13,9 @@ impl GameAssets {
         self.asteroids[index].clone()
     }
 
-    pub fn get_spaceship(&self) -> Handle<Scene> {
-        self.spaceship.clone()
-    }
+    // pub fn get_spaceship(&self) -> Handle<Scene> {
+    //     self.spaceship.clone()
+    // }
 
     pub fn get_projectile(&self) -> Handle<Scene> {
         self.projectile.clone()

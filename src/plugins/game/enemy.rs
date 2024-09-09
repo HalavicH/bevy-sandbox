@@ -28,13 +28,6 @@ impl Plugin for EnemyPlugin {
     }
 }
 
-const EYE_BOT_ENEMY_PATH_RADIUS: f32 = 10.0;
-
-#[derive(Resource, Debug)]
-pub struct EyeBotCircleTimer {
-    pub timer: Timer,
-}
-
 fn rotate_eye_bot_enemy_orbit_vector(orbit_vector: &mut Vec3, time: &Time, rotation_time_sec: f32) {
     if rotation_time_sec == 0.0 {
         warn!("Rotation time is 0.0. Skipping rotation.");
@@ -63,7 +56,6 @@ pub fn move_eye_bot_enemy(
         let rotation_time_sec = eb.rotation_time_sec;
 
         rotate_eye_bot_enemy_orbit_vector(&mut eb.orbit_vector, &time, rotation_time_sec);
-        transform.translation =
-            eb.initial_position.unwrap() + eb.orbit_vector * EYE_BOT_ENEMY_PATH_RADIUS;
+        transform.translation = eb.initial_position.unwrap() + eb.orbit_vector * eb.path_radius;
     }
 }

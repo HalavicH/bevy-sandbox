@@ -31,6 +31,7 @@ pub struct SpinVelocity {
 }
 
 impl SpinVelocity {
+    #[allow(dead_code)]
     pub fn new(value: Vec3) -> Self {
         Self { value }
     }

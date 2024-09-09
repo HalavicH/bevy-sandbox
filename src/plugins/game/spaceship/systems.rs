@@ -4,12 +4,8 @@ use crate::plugins::game::movement::components::{Acceleration, Velocity};
 use crate::plugins::game::movement::MovingObjectBundle;
 use crate::plugins::game::spaceship::components::{PlayerStats, Projectile, Spaceship};
 use bevy::prelude::*;
-use bevy::render::mesh::VertexAttributeValues;
 use blenvy::{BlueprintInfo, SpawnBlueprint};
 use std::f32::consts::FRAC_PI_2;
-
-const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
-const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
 
 const SPACESHIP_SPEED_SCALAR: f32 = 25.0;
 const SPACESHIP_ROTATION_SCALAR: f32 = 2.5;
@@ -19,25 +15,10 @@ const SPACESHIP_ROLL_SCALAR: f32 = 5.0;
 #[reflect(Component, Default)]
 struct LazyLoad;
 
-fn calculate_bounding_box(mesh: &Mesh) -> (Vec3, Vec3) {
-    let positions = match mesh.attribute(Mesh::ATTRIBUTE_POSITION) {
-        Some(VertexAttributeValues::Float32x3(positions)) => positions,
-        _ => panic!("Mesh does not have positions"),
-    };
+pub fn _spawn_spaceship_from_blueprint_example(mut commands: Commands) {
+    const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
+    const STARTING_VELOCITY: Vec3 = Vec3::new(0.0, 0.0, 1.0);
 
-    let mut min = Vec3::splat(f32::MAX);
-    let mut max = Vec3::splat(f32::MIN);
-
-    for &position in positions.iter() {
-        let position = Vec3::from(position);
-        min = min.min(position);
-        max = max.max(position);
-    }
-
-    (min, max)
-}
-
-pub fn spawn_spaceship_from_blueprint_example(mut commands: Commands) {
     commands
         .spawn((
             BlueprintInfo {

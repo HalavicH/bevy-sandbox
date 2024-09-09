@@ -60,9 +60,7 @@ fn spawn_camera(mut commands: Commands) {
         .insert(MainCamera);
 }
 
-const CAMERA_SPEED: f32 = 10.0;
 fn fly_camera(
-    time: Res<Time>,
     mut camera_query: Query<&mut Transform, (With<MainCamera>, Without<Spaceship>)>,
     player_query: Query<&Transform, With<Spaceship>>,
 ) {
