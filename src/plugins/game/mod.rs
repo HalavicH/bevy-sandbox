@@ -2,6 +2,7 @@ use crate::plugins::game::assets::GameAssetsPlugin;
 use crate::plugins::game::asteroid::AsteroidPlugin;
 use crate::plugins::game::blenvy::BlenvyInitializerPlugin;
 use crate::plugins::game::collision::CollisionPlugin;
+use crate::plugins::game::debug::DebugPlugin;
 use crate::plugins::game::enemy::EnemyPlugin;
 use crate::plugins::game::movement::MovementPlugin;
 use crate::plugins::game::spaceship::{Spaceship, SpaceshipPlugin};
@@ -34,7 +35,7 @@ impl Plugin for GamePlugin {
             .add_plugins(CollisionPlugin)
             .add_plugins(EnemyPlugin)
             .add_plugins(UiPlugin)
-            // .add_plugins(DebugPlugin)
+            .add_plugins(DebugPlugin)
             // Startup systems
             .add_systems(Startup, spawn_camera)
             // Update systems
@@ -79,6 +80,9 @@ fn despawn_out_of_area(
     mut commands: Commands,
     query: Query<(Entity, &GlobalTransform), Without<Camera>>,
 ) {
+    if true {
+        return;
+    };
     // TODO: Relative to camera
     for (e, transform) in query.iter() {
         let tr_x = &transform.translation().x;

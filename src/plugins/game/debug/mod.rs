@@ -1,12 +1,18 @@
 use crate::plugins::game::collision::Colliders;
+use crate::plugins::game::spaceship::PlayerStats;
 use bevy::prelude::*;
+use bevy_inspector_egui::quick::{ResourceInspectorPlugin, WorldInspectorPlugin};
 
 pub struct DebugPlugin;
 
 impl Plugin for DebugPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, print_position)
-            .add_systems(Update, print_colliders);
+        app
+            // .add_systems(Update, print_colliders)
+            // .add_systems(Update, print_position)
+            .add_plugins(WorldInspectorPlugin::new())
+            .add_plugins(ResourceInspectorPlugin::<Time>::default())
+            .add_plugins(ResourceInspectorPlugin::<PlayerStats>::default());
     }
 }
 

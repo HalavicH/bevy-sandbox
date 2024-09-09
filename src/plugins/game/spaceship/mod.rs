@@ -7,12 +7,17 @@ pub struct SpaceshipPlugin;
 
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<ProjectileTimer>()
+        app
+            // Resource initialization
+            .init_resource::<ProjectileTimer>()
             .init_resource::<PlayerStats>()
-            // .add_systems(PostStartup, spawn_spaceship)
+            // Type registration
+            .register_type::<Spaceship>()
+            .register_type::<PlayerStats>()
+            // Systems
             .add_systems(Update, move_spaceship)
+            // Plugins
             .add_plugins(WeaponPlugin);
-        // .add_systems(Update, (load_assets));
     }
 }
 
@@ -20,7 +25,8 @@ impl Plugin for SpaceshipPlugin {
 #[reflect(Component, Default)]
 pub struct Spaceship;
 
-#[derive(Resource, Debug)]
+#[derive(Resource, Debug, Reflect)]
+#[reflect(Resource, Debug)]
 pub struct PlayerStats {
     pub score: i32,
     pub health: i32,

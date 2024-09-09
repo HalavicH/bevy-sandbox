@@ -107,10 +107,10 @@ fn update_player_hud_ui(
         } else if weapon_label.is_some() {
             text.sections[0].value = format!("Type: {:?}", player_stats.active_weapon);
         } else if ammo_label.is_some() {
-            let w = player_stats
-                .weapons
-                .get(&player_stats.active_weapon)
-                .unwrap();
+            let Some(w) = player_stats.weapons.get(&player_stats.active_weapon) else {
+                warn!("Weapon {:?} not initialized", player_stats.active_weapon);
+                continue;
+            };
             text.sections[0].value = format!("Ammo: {}/{}", w.ammo_left, w.max_ammo);
         }
     }

@@ -28,7 +28,8 @@ pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, calculate_colliders);
+        app.register_type::<Colliders>()
+            .add_systems(Update, calculate_colliders);
     }
 }
 

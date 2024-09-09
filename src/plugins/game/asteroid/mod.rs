@@ -38,6 +38,7 @@ impl Default for AsteroidSpawnTimer {
 impl Plugin for AsteroidPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<AsteroidSpawnTimer>()
+            .register_type::<Asteroid>()
             .add_systems(Update, spawn_asteroid)
             .add_systems(Update, despawn_on_collision);
     }

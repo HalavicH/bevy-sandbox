@@ -17,7 +17,13 @@ pub struct MovingObjectBundle {
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (update_velocity, update_position, update_rotation));
+        app
+            // Type registration
+            .register_type::<SpinVelocity>()
+            .register_type::<Velocity>()
+            .register_type::<Acceleration>()
+            // Systems
+            .add_systems(Update, (update_velocity, update_position, update_rotation));
     }
 }
 

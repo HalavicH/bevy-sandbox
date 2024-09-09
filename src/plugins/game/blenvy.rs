@@ -1,9 +1,3 @@
-use crate::plugins::game::asteroid::Asteroid;
-use crate::plugins::game::collision::Colliders;
-use crate::plugins::game::enemy::{EnemySpaceship, EyeBotEnemy};
-use crate::plugins::game::movement::components::{Acceleration, SpinVelocity, Velocity};
-use crate::plugins::game::spaceship::weapon::Projectile;
-use crate::plugins::game::spaceship::Spaceship;
 use bevy::prelude::*;
 use blenvy::*;
 
@@ -13,15 +7,6 @@ impl Plugin for BlenvyInitializerPlugin {
     fn build(&self, app: &mut App) {
         app
             // Register all components as reflectable to be able to use them in the blender plugin
-            .register_type::<Acceleration>()
-            .register_type::<SpinVelocity>()
-            .register_type::<Colliders>()
-            .register_type::<Velocity>()
-            .register_type::<Spaceship>()
-            .register_type::<EnemySpaceship>()
-            .register_type::<EyeBotEnemy>()
-            .register_type::<Projectile>()
-            .register_type::<Asteroid>()
             .add_systems(Startup, setup)
             .add_plugins(BlenvyPlugin::default());
     }

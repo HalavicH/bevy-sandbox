@@ -31,7 +31,12 @@ pub struct EnemyPlugin;
 impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app
+            // Resource initialization
             // .init_resource()
+            // Type registration
+            .register_type::<EnemySpaceship>()
+            .register_type::<EyeBotEnemy>()
+            // Systems
             .add_systems(Update, move_eye_bot_enemy);
     }
 }

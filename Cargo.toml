@@ -8,3 +8,4 @@ bevy = "0.14.1"
 blenvy = "0.1.0-alpha.1"
 rand = "0.8.5"
 log = "0.4.22"  # Ensure you're using the latest version of Bevy
+bevy-inspector-egui = "0.25.2"

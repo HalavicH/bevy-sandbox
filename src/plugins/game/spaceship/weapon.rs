@@ -4,7 +4,7 @@ use crate::plugins::game::movement::components::Velocity;
 use crate::plugins::game::movement::MovingObjectBundle;
 use crate::plugins::game::spaceship::{PlayerStats, ProjectileTimer, Spaceship};
 use bevy::prelude::*;
-use std::f32::consts::{FRAC_PI_2};
+use std::f32::consts::FRAC_PI_2;
 use std::time::Duration;
 
 #[derive(Component, Default, Clone, Reflect)]
@@ -89,7 +89,8 @@ pub struct WeaponPlugin;
 
 impl Plugin for WeaponPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, fire_weapon);
+        app.register_type::<Projectile>()
+            .add_systems(Update, fire_weapon);
     }
 }
 pub fn fire_weapon(
@@ -107,7 +108,10 @@ pub fn fire_weapon(
     };
 
     let weapon_type = &player_stats.active_weapon.clone();
-    let weapon = player_stats.weapons.get_mut(weapon_type).unwrap();
+    let Some(weapon) = player_stats.weapons.get_mut(weapon_type) else {
+        warn!("Weapon {:?} not initialized", weapon_type);
+        return;
+    };
 
     timer.value.tick(time.delta());
     if !input.pressed(KeyCode::Space) {
