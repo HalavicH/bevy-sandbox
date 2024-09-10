@@ -6,6 +6,7 @@ use crate::plugins::game::spaceship::components::{PlayerStats, Projectile, Space
 use bevy::prelude::*;
 use blenvy::{BlueprintInfo, SpawnBlueprint};
 use std::f32::consts::FRAC_PI_2;
+use crate::plugins::game::MainBlenderCamera;
 
 const SPACESHIP_SPEED_SCALAR: f32 = 25.0;
 const SPACESHIP_ROTATION_SCALAR: f32 = 2.5;
@@ -66,6 +67,7 @@ pub fn move_spaceship(
     input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut query: Query<(&mut Velocity, &mut Transform), With<Spaceship>>,
+    mut camera_query: Query<&mut Transform, (With<MainBlenderCamera>, Without<Spaceship>)>
 ) {
     let Ok((mut velocity, mut transform)) = query.get_single_mut() else {
         debug!("Spaceship not found or multiple spaceships found");
@@ -103,6 +105,10 @@ pub fn move_spaceship(
     velocity.value = forward_direction * movement;
     transform.rotate_y(rotation);
     transform.rotate_local_z(roll);
+
+    for mut transform in camera_query.iter_mut() {
+        transform.translation.z += velocity.value.z * time.delta_seconds();
+    }
 }
 
 #[derive(Resource)]

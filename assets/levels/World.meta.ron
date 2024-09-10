@@ -10,5 +10,7 @@
     ("Atlas.001", File ( path: "materials/Atlas.001.glb" )),
     ("Enemy Eye-bot Spaceship", File ( path: "blueprints/Enemy Eye-bot Spaceship.glb" )),
     ("Atlas.004", File ( path: "materials/Atlas.004.glb" )),
+    ("Background", File ( path: "blueprints/Background.glb" )),
+    ("Material.002", File ( path: "materials/Material.002.glb" )),
    ]
 )

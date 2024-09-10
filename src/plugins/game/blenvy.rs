@@ -5,6 +5,7 @@ use crate::plugins::game::movement::components::{Acceleration, SpinVelocity, Vel
 use crate::plugins::game::spaceship::components::{Projectile, Spaceship};
 use bevy::prelude::*;
 use blenvy::*;
+use crate::plugins::game::MainBlenderCamera;
 
 pub struct BlenvyInitializerPlugin;
 
@@ -21,6 +22,7 @@ impl Plugin for BlenvyInitializerPlugin {
             .register_type::<EyeBotEnemy>()
             .register_type::<Projectile>()
             .register_type::<Asteroid>()
+            .register_type::<MainBlenderCamera>()
             .add_systems(Startup, setup)
             .add_plugins(BlenvyPlugin::default());
     }
