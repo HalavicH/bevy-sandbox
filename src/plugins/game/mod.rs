@@ -23,11 +23,12 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(ClearColor(Color::srgb(0.08, 0.01, 0.1)))
-            .insert_resource(AmbientLight {
-                color: Color::default(),
-                brightness: 1000.0,
-            })
+        app
+            // .insert_resource(ClearColor(Color::srgb(0.08, 0.01, 0.1)))
+            // .insert_resource(AmbientLight {
+            //     color: Color::default(),
+            //     brightness: 1000.0,
+            // })
             .add_plugins(BlenvyInitializerPlugin)
             .add_plugins(GameAssetsPlugin)
             .add_plugins(SpaceshipPlugin)
